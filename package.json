@@ -6,14 +6,17 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview",
+    "preview": "bun run build && wrangler dev",
     "format": "prettier --write .",
-    "lint": "oxlint ."
+    "lint": "oxlint .",
+    "deploy": "bun run build && wrangler deploy"
   },
   "devDependencies": {
+    "@cloudflare/vite-plugin": "^1.42.4",
     "oxlint": "^1.72.0",
     "prettier": "^3.9.4",
     "typescript": "~6.0.2",
-    "vite": "^8.1.1"
+    "vite": "^8.1.1",
+    "wrangler": "^4.106.0"
   }
 }
