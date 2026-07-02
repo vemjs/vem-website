@@ -1,5 +1,13 @@
-import { UIComponent, PanelGroup, Panel, ScrollView, Markdown, Button, Stack } from '@vectojs/ui';
-import type { IRenderer } from '@vectojs/core';
+import {
+  UIComponent,
+  PanelGroup,
+  Panel,
+  ScrollView,
+  Markdown,
+  Button,
+  Stack,
+} from "@vectojs/ui";
+import type { IRenderer } from "@vectojs/core";
 
 const DOC_PAGES: Record<string, string> = {
   intro: `# Introduction to Vem
@@ -94,7 +102,7 @@ Yes! \`@vemjs/lsp-client\` supports standard JSON-RPC 2.0. By using a local WebS
 
 ### Q: Is there a desktop client?
 Yes. We have Tauri integrations planned to compile native binaries running directly on Windows, macOS, and Linux conforming to standard XDG config directories.
-`
+`,
 };
 
 export class DocsView extends UIComponent {
@@ -105,7 +113,7 @@ export class DocsView extends UIComponent {
   private mdRenderer: Markdown;
   private sidebarStack: Stack;
 
-  private activeSection = 'intro';
+  private activeSection = "intro";
 
   constructor(width: number, height: number) {
     super();
@@ -113,7 +121,7 @@ export class DocsView extends UIComponent {
     this.height = height;
 
     this.panelGroup = new PanelGroup({
-      direction: 'horizontal',
+      direction: "horizontal",
       width: width,
       height: height - 50, // reserve space for header offset
     });
@@ -122,16 +130,16 @@ export class DocsView extends UIComponent {
     this.contentPanel = new Panel({ minSize: 400 });
 
     // 1. Sidebar items Stack
-    this.sidebarStack = new Stack({ direction: 'vertical', gap: 10 });
+    this.sidebarStack = new Stack({ direction: "vertical", gap: 10 });
     this.sidebarStack.setPosition(15, 20);
 
     const addSectionBtn = (id: string, label: string) => {
       const btn = new Button(label, {
         onClick: () => this.setSection(id),
-        bg: id === this.activeSection ? '#8b5cf6' : '#1e293b',
-        hoverBg: id === this.activeSection ? '#a78bfa' : '#334155',
-        color: '#ffffff',
-        font: '600 14px Outfit, sans-serif',
+        bg: id === this.activeSection ? "#8b5cf6" : "#1e293b",
+        hoverBg: id === this.activeSection ? "#a78bfa" : "#334155",
+        color: "#ffffff",
+        font: "600 14px Outfit, sans-serif",
         radius: 6,
       });
       btn.width = 180;
@@ -140,11 +148,11 @@ export class DocsView extends UIComponent {
       this.sidebarStack.add(btn);
     };
 
-    addSectionBtn('intro', '📚 Introduction');
-    addSectionBtn('commands', '⌨️ Commands');
-    addSectionBtn('config', '🎛️ Configuration');
-    addSectionBtn('plugins', '🔌 Plugins');
-    addSectionBtn('faq', '💬 FAQ');
+    addSectionBtn("intro", "📚 Introduction");
+    addSectionBtn("commands", "⌨️ Commands");
+    addSectionBtn("config", "🎛️ Configuration");
+    addSectionBtn("plugins", "🔌 Plugins");
+    addSectionBtn("faq", "💬 FAQ");
 
     this.sidebarPanel.add(this.sidebarStack);
 
@@ -175,14 +183,14 @@ export class DocsView extends UIComponent {
     if (DOC_PAGES[sectionId]) {
       this.activeSection = sectionId;
       this.mdRenderer.setContent(DOC_PAGES[sectionId]);
-      
+
       // Update sidebar buttons highlight state
       const buttons = this.sidebarStack.children;
       for (const btn of buttons) {
         if (btn instanceof Button) {
           const isCurrent = (btn as any).sectionId === sectionId;
-          btn.bg = isCurrent ? '#8b5cf6' : '#1e293b';
-          btn.hoverBg = isCurrent ? '#a78bfa' : '#334155';
+          btn.bg = isCurrent ? "#8b5cf6" : "#1e293b";
+          btn.hoverBg = isCurrent ? "#a78bfa" : "#334155";
         }
       }
     }
@@ -211,7 +219,7 @@ export class DocsView extends UIComponent {
     r.lineTo(this.width, this.height);
     r.lineTo(0, this.height);
     r.closePath();
-    r.fill('#0b0f19'); // matching background slate
+    r.fill("#0b0f19"); // matching background slate
 
     // Gutter border separating sidebar and content
     const splitX = this.sidebarPanel.width;
@@ -219,6 +227,6 @@ export class DocsView extends UIComponent {
     r.moveTo(splitX, 50);
     r.lineTo(splitX, this.height);
     r.closePath();
-    r.stroke('#1f2937', 1);
+    r.stroke("#1f2937", 1);
   }
 }

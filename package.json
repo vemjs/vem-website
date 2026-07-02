@@ -13,9 +13,9 @@
   "dependencies": {
     "@vectojs/core": "0.1.0",
     "@vectojs/ui": "0.1.1",
-    "@vemjs/core": "workspace:*",
-    "@vemjs/renderer-vecto": "workspace:*",
-    "@vemjs/plugin-api": "workspace:*"
+    "@vemjs/core": "^0.1.0",
+    "@vemjs/renderer-vecto": "^0.1.0",
+    "@vemjs/plugin-api": "^0.1.0"
   },
   "devDependencies": {
     "oxlint": "^1.72.0",
