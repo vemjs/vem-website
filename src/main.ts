@@ -1,6 +1,8 @@
 import "./style.css";
 import { Scene } from "@vectojs/core";
 import { WorkspaceExplorer } from "@vemjs/renderer-vecto";
+import { ConfigLoader } from "@vemjs/core";
+import { PluginRegistry } from "@vemjs/plugin-api";
 
 console.log(
   "%cVem — Next-Gen Modal Text Editor",
@@ -38,6 +40,39 @@ To start, click here to focus, then enjoy modal editing!`;
     canvas.height,
     welcomeText,
   );
+
+  explorer.onDidOpenDirectory(async (nodes, fsHandler) => {
+    const configNode = nodes.find(
+      (node) => node.label === ".vemrc.json" || node.label === ".vemrc.js",
+    );
+    if (configNode) {
+      const fileHandle = fsHandler.getFileHandle(configNode.id);
+      if (fileHandle) {
+        try {
+          const configContent = await fsHandler.readFile(fileHandle);
+          console.log(`Found config file: ${configNode.label}, loading...`);
+          const activeState = explorer
+            .getWorkspace()
+            .getActiveLayout()
+            ?.getActiveState();
+          if (activeState) {
+            const registry = new PluginRegistry(activeState);
+            const loader = new ConfigLoader(activeState);
+            if (configNode.label.endsWith(".json")) {
+              const config = JSON.parse(configContent);
+              await loader.loadConfigFromObject(config, registry);
+            } else {
+              // .vemrc.js
+              await loader.loadConfigFromJsString(configContent, registry);
+            }
+            console.log(`Configuration successfully applied.`);
+          }
+        } catch (err) {
+          console.error(`Failed to load workspace config:`, err);
+        }
+      }
+    }
+  });
 
   scene.add(explorer);
   scene.start();
