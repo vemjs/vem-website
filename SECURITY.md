@@ -4,8 +4,8 @@
 
 Security fixes land on the latest deployed version of the website. Older versions are not maintained.
 
-| Package | Supported |
-| --- | --- |
+| Package       | Supported                 |
+| ------------- | ------------------------- |
 | `vem-website` | Active / Deployed version |
 
 ## Reporting a Vulnerability

@@ -10,6 +10,12 @@
     "format": "prettier --write .",
     "lint": "oxlint ."
   },
+  "dependencies": {
+    "@vectojs/core": "0.1.0",
+    "@vectojs/ui": "0.1.1",
+    "@vemjs/core": "workspace:*",
+    "@vemjs/renderer-vecto": "workspace:*"
+  },
   "devDependencies": {
     "oxlint": "^1.72.0",
     "prettier": "^3.9.4",

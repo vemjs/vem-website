@@ -1,4 +1,6 @@
 import "./style.css";
+import { Scene } from "@vectojs/core";
+import { WorkspaceExplorer } from "@vemjs/renderer-vecto";
 
 console.log(
   "%cVem — Next-Gen Modal Text Editor",
@@ -8,6 +10,74 @@ console.log(
   "%cPowered by VectoUI (WebGL Canvas Engine)",
   "color: #6366f1; font-size: 14px;",
 );
+
+// Initialize the Vem Editor on the playground canvas
+const canvas = document.getElementById("vem-canvas") as HTMLCanvasElement;
+if (canvas) {
+  const scene = new Scene(canvas);
+
+  const welcomeText = `Welcome to Vem!
+
+This is a live editor playground powered entirely by the VectoUI zero-DOM canvas rendering engine.
+
+Basic modal editing features:
+  - Press 'i' to enter INSERT mode. Type text.
+  - Press 'Escape' to return to NORMAL mode.
+  - Press 'v' to enter VISUAL mode. Select characters using 'h'/'l'.
+  - Press ':' to bring up the COMMAND bar. Type 'w' and press 'Enter' to save.
+
+Use splits and tabs:
+  - Command ':vsp' creates a vertical pane split.
+  - Command ':sp' creates a horizontal pane split.
+  - Command ':q' closes the active pane.
+
+To start, click here to focus, then enjoy modal editing!`;
+
+  const explorer = new WorkspaceExplorer(
+    canvas.width,
+    canvas.height,
+    welcomeText,
+  );
+
+  scene.add(explorer);
+  scene.start();
+
+  canvas.tabIndex = 0; // make canvas focusable
+  canvas.addEventListener("keydown", (e) => {
+    // Prevent default browser behavior for standard Vim binds to avoid page scrolling
+    if (
+      [
+        "Space",
+        "ArrowUp",
+        "ArrowDown",
+        "ArrowLeft",
+        "ArrowRight",
+        "Tab",
+        "Backspace",
+      ].includes(e.key) ||
+      (e.key === "r" && e.ctrlKey) ||
+      (e.key === "v" && e.ctrlKey)
+    ) {
+      e.preventDefault();
+    }
+
+    const activeLayout = explorer.getWorkspace().getActiveLayout();
+    const activeState = activeLayout?.getActiveState();
+    if (activeState) {
+      let mappedKey = e.key;
+      if (e.ctrlKey) {
+        if (e.key === "r") mappedKey = "<C-r>";
+        else if (e.key === "v") mappedKey = "<C-v>";
+      }
+      activeState.handleKey(mappedKey);
+    }
+  });
+
+  // Automatically focus canvas on click
+  canvas.addEventListener("click", () => {
+    canvas.focus();
+  });
+}
 
 // Simple microinteraction: Ripple effect on glass cards
 document.querySelectorAll(".card").forEach((card) => {

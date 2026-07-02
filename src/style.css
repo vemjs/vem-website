@@ -288,3 +288,59 @@ body {
   color: #6b7280;
   font-size: 0.9rem;
 }
+
+/* Interactive Editor Playground */
+.playground-section {
+  max-width: 1100px;
+  margin: 3rem auto;
+  padding: 0 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.playground-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.playground-header h2 {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 0.5rem;
+}
+
+.playground-header p {
+  color: #9ca3af;
+  max-width: 600px;
+  font-size: 1.05rem;
+  line-height: 1.6;
+}
+
+.canvas-container {
+  padding: 8px;
+  border-radius: 16px;
+  background: rgba(15, 23, 42, 0.6); /* deep slate background */
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow:
+    0 10px 40px rgba(0, 0, 0, 0.5),
+    0 0 50px rgba(139, 92, 246, 0.15); /* purple neon glow */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+#vem-canvas {
+  background-color: #0f172a;
+  border-radius: 12px;
+  max-width: 100%;
+  height: auto;
+  display: block;
+  outline: none;
+  cursor: text;
+}
