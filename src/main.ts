@@ -117,7 +117,8 @@ Modal editing guides:
 To try loading local workspace config, click 'Open Folder' in the sidebar and select a project with a '.vemrc.json' or '.vemrc.js' file in its root!`;
 
   // 2. Instantiate Views
-  let activeRoute = "home";
+  let activeRoute = "playground";
+  let showNavbar = false;
 
   const homeView = new HomeView(
     canvas.width,
@@ -129,11 +130,10 @@ To try loading local workspace config, click 'Open Folder' in the sidebar and se
 
   const playgroundView = new WorkspaceExplorer(
     canvas.width,
-    canvas.height - 50,
+    canvas.height,
     welcomeText,
   );
-  // Position playground view right below the navbar
-  playgroundView.setPosition(0, 50);
+  playgroundView.setPosition(0, 0);
 
   // Hook workspace loader config logic
   playgroundView.onDidOpenDirectory(async (nodes, fsHandler) => {
@@ -171,12 +171,11 @@ To try loading local workspace config, click 'Open Folder' in the sidebar and se
   const docsView = new DocsView(canvas.width, canvas.height);
   const configView = new ConfigView(canvas.width, canvas.height);
 
-  // 3. Navigation Bar
+  // 3. Navigation Bar (hidden by default)
   const navbar = new Navbar(canvas.width, (route) => navigate(route));
 
   // Default initial mount
-  scene.add(homeView);
-  scene.add(navbar);
+  scene.add(playgroundView);
   scene.start();
 
   // 4. Routing function
@@ -202,6 +201,19 @@ To try loading local workspace config, click 'Open Folder' in the sidebar and se
     canvas.focus();
   };
 
+  const toggleNavbar = () => {
+    showNavbar = !showNavbar;
+    if (showNavbar) {
+      scene.add(navbar);
+      playgroundView.setPosition(0, 50);
+      playgroundView.height = canvas.height - 50;
+    } else {
+      scene.remove(navbar);
+      playgroundView.setPosition(0, 0);
+      playgroundView.height = canvas.height;
+    }
+  };
+
   // 5. Canvas Event routing
   canvas.tabIndex = 0;
   canvas.focus();
@@ -211,6 +223,13 @@ To try loading local workspace config, click 'Open Folder' in the sidebar and se
   });
 
   canvas.addEventListener("keydown", (e) => {
+    // F1 to toggle navigation bar
+    if (e.key === "F1") {
+      e.preventDefault();
+      toggleNavbar();
+      return;
+    }
+
     // Only route editor keys if we are in the playground view
     if (activeRoute !== "playground") return;
 
@@ -253,7 +272,7 @@ To try loading local workspace config, click 'Open Folder' in the sidebar and se
     navbar.width = w;
     homeView.reposition(w, h);
     playgroundView.width = w;
-    playgroundView.height = h - 50;
+    playgroundView.height = showNavbar ? h - 50 : h;
     docsView.reposition(w, h);
     configView.reposition(w, h);
 
