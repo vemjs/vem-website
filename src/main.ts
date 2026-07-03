@@ -174,10 +174,6 @@ To try loading local workspace config, click 'Open Folder' in the sidebar and se
   // 3. Navigation Bar (hidden by default)
   const navbar = new Navbar(canvas.width, (route) => navigate(route));
 
-  // Default initial mount
-  scene.add(playgroundView);
-  scene.start();
-
   // 4. Routing function
   const navigate = (route: string) => {
     if (route === activeRoute) return;
@@ -197,9 +193,45 @@ To try loading local workspace config, click 'Open Folder' in the sidebar and se
     activeRoute = route;
     navbar.setRouteActive(route);
 
+    // Sync hash in URL
+    if (window.location.hash !== `#${route}`) {
+      window.location.hash = route;
+    }
+
     // Auto-focus canvas on view transition
     canvas.focus();
   };
+
+  // Sync route on hash change
+  const syncRouteFromHash = () => {
+    const hash = window.location.hash.substring(1);
+    const validRoutes = ["home", "playground", "docs", "config"];
+    if (validRoutes.includes(hash)) {
+      navigate(hash);
+    } else {
+      navigate("home");
+    }
+  };
+
+  window.addEventListener("hashchange", syncRouteFromHash);
+
+  // Default initial mount based on current URL hash
+  const initialHash = window.location.hash.substring(1);
+  const validRoutes = ["home", "playground", "docs", "config"];
+  activeRoute = validRoutes.includes(initialHash) ? initialHash : "home";
+
+  if (activeRoute === "home") {
+    scene.add(homeView);
+  } else if (activeRoute === "playground") {
+    scene.add(playgroundView);
+  } else if (activeRoute === "docs") {
+    scene.add(docsView);
+  } else if (activeRoute === "config") {
+    scene.add(configView);
+  }
+
+  navbar.setRouteActive(activeRoute);
+  scene.start();
 
   const toggleNavbar = () => {
     showNavbar = !showNavbar;
