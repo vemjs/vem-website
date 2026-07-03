@@ -1,4 +1,6 @@
-<!-- Conventional Commit title, e.g. feat(website): add plugins market page -->
+# Pull Request
+
+<!-- Conventional Commit title, e.g. feat(home): enhance responsive mobile layout -->
 
 ## What & why
 
@@ -10,13 +12,14 @@
 
 ## Testing
 
-<!-- How was this verified? Paste screenshots or CLI outputs. -->
+<!-- How was this verified? Paste test outputs or screenshot coordinate metrics. -->
 
-- [ ] `bun run build` compiles successfully (Vite build)
+- [ ] `bun run build` passes
 - [ ] `bun run lint` clean (oxlint)
 - [ ] `bun run format` applied (prettier)
 
 ## Checklist
 
+- [ ] Web accessibility attributes (WAI-ARIA) are handled
+- [ ] No new dead code added
 - [ ] Commits follow Conventional Commits standard
-- [ ] Responsive design verified (Desktop & Mobile viewports)

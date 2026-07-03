@@ -4,19 +4,10 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
-    commit-message:
-      prefix: "chore"
+      day: "monday"
+    open-pull-requests-limit: 5
     groups:
-      dependencies:
-        patterns:
-          - "*"
-  - package-ecosystem: "github-actions"
-    directory: "/"
-    schedule:
-      interval: "weekly"
-    commit-message:
-      prefix: "ci"
-    groups:
-      actions:
-        patterns:
-          - "*"
+      dev-dependencies:
+        dependency-type: "development"
+      production-dependencies:
+        dependency-type: "production"
