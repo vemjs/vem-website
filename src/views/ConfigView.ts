@@ -118,9 +118,6 @@ export class ConfigView extends UIComponent {
     addBtn.height = 36;
     this.configStack.add(addBtn);
 
-    // Add initial default row
-    this.addKeybindingRow("NORMAL", "jk", "editor.escape");
-
     // 2. Live JSON Preview Panel (Right Column)
     this.livePreviewCard = new Card({
       width: 400,
@@ -162,6 +159,7 @@ export class ConfigView extends UIComponent {
     this.add(this.livePreviewCard);
     this.add(this.copyBtn);
 
+    this.addKeybindingRow("NORMAL", "jk", "editor.escape");
     this.updatePreview();
   }
 
@@ -196,7 +194,7 @@ export class ConfigView extends UIComponent {
       },
     });
 
-    const delBtn = new Button("✕", {
+    const delBtn = new Button("Delete", {
       onClick: () => this.removeKeybindingRow(keysInput),
       bg: "#ef4444",
       hoverBg: "#f87171",
@@ -204,7 +202,7 @@ export class ConfigView extends UIComponent {
       font: "bold 12px sans-serif",
       radius: 4,
     });
-    delBtn.width = 32;
+    delBtn.width = 64;
     delBtn.height = 32;
 
     const rowContainer = new Stack({ direction: "horizontal", gap: 10 });
@@ -232,6 +230,7 @@ export class ConfigView extends UIComponent {
     const idx = this.keybindings.findIndex((r) => r.keysInput === keysInput);
     if (idx !== -1) {
       const row = this.keybindings[idx];
+      this.scene?.detachA11y(row.container);
       this.keymapsStack.remove(row.container);
       this.keybindings.splice(idx, 1);
       this.configStack.layout();

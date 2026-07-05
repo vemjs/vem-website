@@ -16,6 +16,20 @@ jobs:
         with:
           bun-version: latest
 
+      - name: Wait for Vem packages
+        run: |
+          CORE_VERSION=$(node -p "require('./package.json').dependencies['@vemjs/core'].replace(/^[^0-9]*/, '')")
+          PLUGIN_API_VERSION=$(node -p "require('./package.json').dependencies['@vemjs/plugin-api'].replace(/^[^0-9]*/, '')")
+          RENDERER_VERSION=$(node -p "require('./package.json').dependencies['@vemjs/renderer-vecto'].replace(/^[^0-9]*/, '')")
+          for i in {1..30}; do
+            if npm view "@vemjs/core@$CORE_VERSION" version >/dev/null 2>&1 && npm view "@vemjs/plugin-api@$PLUGIN_API_VERSION" version >/dev/null 2>&1 && npm view "@vemjs/renderer-vecto@$RENDERER_VERSION" version >/dev/null 2>&1; then
+              exit 0
+            fi
+            sleep 10
+          done
+          echo "Timed out waiting for @vemjs/core@$CORE_VERSION, @vemjs/plugin-api@$PLUGIN_API_VERSION, and @vemjs/renderer-vecto@$RENDERER_VERSION to be available on npm" >&2
+          exit 1
+
       - name: Install dependencies
         run: bun install
 
@@ -23,7 +37,7 @@ jobs:
         run: bun run lint
 
       - name: Check code format (Prettier)
-        run: bun run format --check
+        run: bun run format:check
 
       - name: Build website
         run: bun run build

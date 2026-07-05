@@ -148,11 +148,11 @@ export class DocsView extends UIComponent {
       this.sidebarStack.add(btn);
     };
 
-    addSectionBtn("intro", "📚 Introduction");
-    addSectionBtn("commands", "⌨️ Commands");
-    addSectionBtn("config", "🎛️ Configuration");
-    addSectionBtn("plugins", "🔌 Plugins");
-    addSectionBtn("faq", "💬 FAQ");
+    addSectionBtn("intro", "Introduction");
+    addSectionBtn("commands", "Commands");
+    addSectionBtn("config", "Configuration");
+    addSectionBtn("plugins", "Plugins");
+    addSectionBtn("faq", "FAQ");
 
     this.sidebarPanel.add(this.sidebarStack);
 

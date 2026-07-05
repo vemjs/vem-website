@@ -86,28 +86,28 @@ export class HomeView extends UIComponent {
     this.cardsFlow = new Flow({ gap: 20, maxWidth: 850 });
 
     const cardDocs = this.createFeatureCard(
-      "📚 Documentation",
+      "Documentation",
       "Guides, configurations, API specifications for plugins, and standard shortcuts.",
-      "Explore Docs →",
+      "Explore Docs",
       onViewDocs,
     );
 
     const cardFAQ = this.createFeatureCard(
-      "💬 Architectural FAQ",
+      "Architectural FAQ",
       "Detailed insights on how Vem bypasses traditional Neovim limitations and embeds inline rich-canvas structures.",
-      "Read FAQ →",
+      "Read FAQ",
       onViewDocs, // goes to FAQ section of docs
     );
 
     const cardConfig = this.createFeatureCard(
-      "🎛️ Visual Configurator",
+      "Visual Configurator",
       "Generate your .vemrc.json dynamically via an interactive graphical builder. Export in one click.",
-      "Open Config Builder →",
+      "Open Config Builder",
       onViewConfig,
     );
 
     const cardPlugins = this.createFeatureCard(
-      "🔌 Plugin Marketplace",
+      "Plugin Marketplace",
       "Browse verified packages or upload your own plugin to register custom keybindings and hooks.",
       "Coming Soon",
       () => {},

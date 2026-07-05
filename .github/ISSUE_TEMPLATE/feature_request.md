@@ -1,9 +1,9 @@
 ---
 name: Feature request
 about: Suggest an idea or UI enhancement for the Vem Web Portal
-title: 'feat: '
-labels: 'enhancement'
-assignees: ''
+title: "feat: "
+labels: "enhancement"
+assignees: ""
 ---
 
 **Is your feature request related to a problem? Please describe.**

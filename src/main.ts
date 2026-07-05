@@ -76,7 +76,7 @@ class Navbar extends UIComponent {
 
     // Draw Vem logo text
     r.fillText("Vem", 20, 32, "bold 22px Outfit, sans-serif", "#ffffff");
-    r.fillText("dev", 70, 30, "600 10px monospace", "#818cf8");
+    r.fillText("run", 70, 30, "600 10px monospace", "#818cf8");
 
     // Draw bottom active indicator bar
     const routes = ["home", "playground", "docs", "config"];
