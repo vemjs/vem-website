@@ -12,8 +12,8 @@
     "lint": "oxlint ."
   },
   "dependencies": {
-    "@vectojs/core": "0.2.2",
-    "@vectojs/ui": "0.2.2",
+    "@vectojs/core": "0.2.3",
+    "@vectojs/ui": "0.2.3",
     "@vemjs/core": "^0.1.4",
     "@vemjs/renderer-vecto": "^0.1.4",
     "@vemjs/plugin-api": "^0.1.4"
