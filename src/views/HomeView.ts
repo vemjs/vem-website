@@ -7,6 +7,9 @@ export class HomeView extends UIComponent {
   private primaryBtn: Button;
   private secondaryBtn: Button;
   private cardsFlow: Flow;
+  private featureCards: Card[] = [];
+  private featureCardBodies: Text[] = [];
+  private featureCardOverlays: Button[] = [];
 
   private particleCount = 20;
   private particles: Array<{
@@ -40,19 +43,19 @@ export class HomeView extends UIComponent {
     }
 
     // 2. Title Text
-    this.titleText = new Text("The Vim and Neovim,\nUnbound from TTY.", {
-      font: "bold 48px Outfit, sans-serif",
+    this.titleText = new Text("Vim Editing,\nNative Canvas UI.", {
+      font: "800 56px Outfit, sans-serif",
       color: "#ffffff",
       maxWidth: 800,
-      lineHeight: 60,
+      lineHeight: 62,
     });
 
     // 3. Subtitle Text
     this.subtitleText = new Text(
-      "A modal editing engine rendered natively in GPU canvas pixels. Escape the fixed-character terminal grid. Embed charts, custom UI popups, inline SVG, and beautiful variable-font typesetting. Powered by VectoUI.",
+      "Vem keeps modal editing fast and familiar, then breaks out of the terminal grid with VectoJS: retained canvas scenes, semantic accessibility projection, rich panels, and plugin-driven editor UI.",
       {
         font: "16px Outfit, sans-serif",
-        color: "#94a3b8",
+        color: "#9fb7af",
         maxWidth: 700,
         lineHeight: 24,
       },
@@ -61,9 +64,9 @@ export class HomeView extends UIComponent {
     // 4. CTA Buttons
     this.primaryBtn = new Button("Launch Editor", {
       onClick: onLaunch,
-      bg: "#8b5cf6", // violet-500
-      hoverBg: "#a78bfa", // violet-400
-      color: "#ffffff",
+      bg: "#0f766e",
+      hoverBg: "#14b8a6",
+      color: "#ecfeff",
       font: "600 16px Outfit, sans-serif",
       radius: 8,
     });
@@ -73,9 +76,9 @@ export class HomeView extends UIComponent {
     this.secondaryBtn = new Button("GitHub Repository", {
       onClick: () =>
         window.open("https://github.com/vemjs/vem", "_blank", "noopener"),
-      bg: "#1e293b", // slate-800
-      hoverBg: "#334155",
-      color: "#ffffff",
+      bg: "#17231f",
+      hoverBg: "#203a34",
+      color: "#edf7f3",
       font: "600 16px Outfit, sans-serif",
       radius: 8,
     });
@@ -87,30 +90,30 @@ export class HomeView extends UIComponent {
 
     const cardDocs = this.createFeatureCard(
       "Documentation",
-      "Guides, configurations, API specifications for plugins, and standard shortcuts.",
+      "Vim motions, command references, renderer notes, and plugin API guides.",
       "Explore Docs",
       onViewDocs,
     );
 
     const cardFAQ = this.createFeatureCard(
       "Architectural FAQ",
-      "Detailed insights on how Vem bypasses traditional Neovim limitations and embeds inline rich-canvas structures.",
+      "How Vem combines a TypeScript Vim state machine with VectoJS Canvas runtime.",
       "Read FAQ",
       onViewDocs, // goes to FAQ section of docs
     );
 
     const cardConfig = this.createFeatureCard(
       "Visual Configurator",
-      "Generate your .vemrc.json dynamically via an interactive graphical builder. Export in one click.",
+      "Build a .vemrc.json from native canvas controls and export it instantly.",
       "Open Config Builder",
       onViewConfig,
     );
 
     const cardPlugins = this.createFeatureCard(
-      "Plugin Marketplace",
-      "Browse verified packages or upload your own plugin to register custom keybindings and hooks.",
-      "Coming Soon",
-      () => {},
+      "Plugin Lab",
+      "Try official plugins directly in the Playground: Telescope, Lualine, Git signs, and more.",
+      "Open Playground",
+      onLaunch,
     );
 
     this.cardsFlow.add(cardDocs);
@@ -135,48 +138,54 @@ export class HomeView extends UIComponent {
   ): Card {
     const card = new Card({
       width: 400,
-      height: 180,
-      bg: "#111827", // grey-900
-      border: "#1f2937", // grey-800
-      radius: 12,
+      height: 150,
+      bg: "#0d1b18",
+      border: "#1d3b35",
+      radius: 16,
       padding: 20,
     });
 
     const titleEl = new Text(title, {
       font: "bold 18px Outfit, sans-serif",
-      color: "#ffffff",
+      color: "#edf7f3",
     }).setPosition(20, 20);
 
     const bodyEl = new Text(body, {
       font: "14px Outfit, sans-serif",
-      color: "#9ca3af",
+      color: "#91aaa1",
       maxWidth: 360,
       lineHeight: 20,
     }).setPosition(20, 50);
 
     const linkEl = new Link(linkText, {
       href: "#",
-      color: "#a78bfa",
+      color: "#2dd4bf",
       font: "600 14px Outfit, sans-serif",
       underline: false,
-    }).setPosition(20, 140);
+    }).setPosition(20, 124);
 
     // Make the link clickable by hooking a button-like overlay if needed, or link component
     // Let's hook a button over the card area for direct interaction
     const clickOverlay = new Button("", {
       onClick,
       bg: "transparent",
-      hoverBg: "rgba(255, 255, 255, 0.02)",
+      hoverBg: "rgba(45, 212, 191, 0.06)",
       radius: 12,
     });
     clickOverlay.width = 400;
-    clickOverlay.height = 180;
+    clickOverlay.height = 150;
     clickOverlay.setPosition(0, 0);
+    // Stable id so audits can exempt this intentional full-card overlay.
+    clickOverlay.id = `card-overlay-${this.featureCardOverlays.length}`;
 
     card.add(titleEl);
     card.add(bodyEl);
     card.add(linkEl);
     card.add(clickOverlay);
+
+    this.featureCards.push(card);
+    this.featureCardBodies.push(bodyEl);
+    this.featureCardOverlays.push(clickOverlay);
 
     return card;
   }
@@ -185,26 +194,44 @@ export class HomeView extends UIComponent {
     this.width = w;
     this.height = h;
 
-    const startY = Math.max(100, h * 0.15);
+    const marginX = w < 560 ? 24 : 50;
+    const contentWidth = Math.min(w - marginX * 2, w >= 1180 ? 760 : 860);
+    const cardWidth = Math.min(400, Math.max(300, w - marginX * 2));
+    const startY = Math.max(92, h * 0.12);
 
-    this.titleText.setPosition(50, startY);
-    this.subtitleText.setPosition(50, startY + 130);
+    this.titleText.setMaxWidth(contentWidth);
+    this.subtitleText.setMaxWidth(Math.min(700, contentWidth));
+    this.titleText.setPosition(marginX, startY);
+    this.subtitleText.setPosition(marginX, startY + 130);
 
-    this.primaryBtn.setPosition(50, startY + 230);
-    this.secondaryBtn.setPosition(230, startY + 230);
+    this.primaryBtn.setPosition(marginX, startY + 224);
+    this.secondaryBtn.setPosition(
+      w < 560 ? marginX : marginX + 180,
+      w < 560 ? startY + 280 : startY + 224,
+    );
 
-    this.cardsFlow.setPosition(50, startY + 310);
-    this.cardsFlow.maxWidth = Math.max(400, w - 100);
+    for (let i = 0; i < this.featureCards.length; i++) {
+      this.featureCards[i].width = cardWidth;
+      this.featureCardBodies[i].setMaxWidth(cardWidth - 40);
+      this.featureCardOverlays[i].width = cardWidth;
+    }
+
+    this.cardsFlow.setPosition(marginX, startY + (w < 560 ? 352 : 294));
+    this.cardsFlow.maxWidth =
+      w >= 1180 ? 860 : Math.max(cardWidth, w - marginX * 2);
     this.cardsFlow.layout();
   }
 
   public update(dt: number, time: number): void {
     super.update(dt, time);
 
+    // VectoJS passes dt in milliseconds; keep the original per-frame velocity feel.
+    const frameScale = dt / (1000 / 60);
+
     // Update background particles
     for (const p of this.particles) {
-      p.x += p.vx * dt * 60;
-      p.y += p.vy * dt * 60;
+      p.x += p.vx * frameScale;
+      p.y += p.vy * frameScale;
 
       // Wrap around bounds
       if (p.x < 0) p.x = this.width;
@@ -222,7 +249,7 @@ export class HomeView extends UIComponent {
     r.lineTo(this.width, this.height);
     r.lineTo(0, this.height);
     r.closePath();
-    r.fill("#0b0f19");
+    r.fill("#06110f");
 
     // Subtle background mesh lines
     r.beginPath();
@@ -235,23 +262,59 @@ export class HomeView extends UIComponent {
       r.moveTo(0, y);
       r.lineTo(this.width, y);
     }
-    r.stroke("rgba(99, 102, 241, 0.03)", 1);
+    r.stroke("rgba(45, 212, 191, 0.035)", 1);
 
-    // Dynamic background glow
-    const grad = "rgba(139, 92, 246, 0.05)";
+    // Right-side vector cockpit silhouette.
     r.save();
     r.beginPath();
-    r.arc(this.width * 0.7, this.height * 0.3, 200, 0, Math.PI * 2);
+    r.arc(this.width * 0.72, this.height * 0.34, 210, 0, Math.PI * 2);
     r.closePath();
-    r.fill(grad);
+    r.fill("rgba(45, 212, 191, 0.055)");
     r.restore();
+
+    if (this.width >= 1120) {
+      r.beginPath();
+      r.roundRect(this.width * 0.62, 130, 360, 220, 22);
+      r.closePath();
+      r.fill("rgba(13, 27, 24, 0.72)");
+      r.stroke("rgba(45, 212, 191, 0.18)", 1.4);
+
+      r.fillText(
+        "NORMAL",
+        this.width * 0.62 + 24,
+        174,
+        "700 12px JetBrains Mono, monospace",
+        "#2dd4bf",
+      );
+      r.fillText(
+        ":Telescope find_files",
+        this.width * 0.62 + 24,
+        214,
+        "13px JetBrains Mono, monospace",
+        "#edf7f3",
+      );
+      r.fillText(
+        "git +  treesitter +  lualine",
+        this.width * 0.62 + 24,
+        254,
+        "12px JetBrains Mono, monospace",
+        "#f4b860",
+      );
+      r.fillText(
+        "Scene -> Canvas pixels -> A11y shadow",
+        this.width * 0.62 + 24,
+        294,
+        "11px JetBrains Mono, monospace",
+        "#91aaa1",
+      );
+    }
 
     // 2. Draw background particles
     for (const p of this.particles) {
       r.beginPath();
       r.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
       r.closePath();
-      r.fill("rgba(167, 139, 250, 0.2)");
+      r.fill("rgba(45, 212, 191, 0.18)");
     }
   }
 }

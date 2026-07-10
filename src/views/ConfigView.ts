@@ -9,6 +9,14 @@ import {
 } from "@vectojs/ui";
 import type { IRenderer } from "@vectojs/core";
 
+const NAV_HEIGHT = 64;
+const BG = "#06110f";
+const PANEL = "#0d1b18";
+const PANEL_STROKE = "#1d3b35";
+const ACCENT = "#2dd4bf";
+const TEXT = "#edf7f3";
+const MUTED = "#91aaa1";
+
 interface KeybindingRow {
   mode: string;
   keys: string;
@@ -43,7 +51,7 @@ export class ConfigView extends UIComponent {
 
     const titleEl = new Text("Visual Configuration Builder", {
       font: "bold 24px Outfit, sans-serif",
-      color: "#ffffff",
+      color: TEXT,
     });
     this.configStack.add(titleEl);
 
@@ -51,7 +59,7 @@ export class ConfigView extends UIComponent {
       "Build your custom .vemrc.json editor settings dynamically.",
       {
         font: "14px Outfit, sans-serif",
-        color: "#94a3b8",
+        color: MUTED,
       },
     );
     this.configStack.add(subEl);
@@ -61,7 +69,7 @@ export class ConfigView extends UIComponent {
       label: "Enable relative line numbers (relativenumber)",
       checked: this.relativeNumbers,
       font: "14px monospace",
-      color: "#cbd5e1",
+      color: TEXT,
       onChange: (v) => {
         this.relativeNumbers = v;
         this.updatePreview();
@@ -72,7 +80,7 @@ export class ConfigView extends UIComponent {
       label: "Trim trailing whitespace on save",
       checked: this.trimWhitespace,
       font: "14px monospace",
-      color: "#cbd5e1",
+      color: TEXT,
       onChange: (v) => {
         this.trimWhitespace = v;
         this.updatePreview();
@@ -83,7 +91,7 @@ export class ConfigView extends UIComponent {
       label: "Native LSP client automatic synchronization",
       checked: this.lspSync,
       font: "14px monospace",
-      color: "#cbd5e1",
+      color: TEXT,
       onChange: (v) => {
         this.lspSync = v;
         this.updatePreview();
@@ -97,7 +105,7 @@ export class ConfigView extends UIComponent {
     // Keybindings Header
     const keymapTitle = new Text("Custom Keymaps (Chords)", {
       font: "bold 18px Outfit, sans-serif",
-      color: "#ffffff",
+      color: TEXT,
     });
     this.configStack.add(keymapTitle);
 
@@ -108,9 +116,9 @@ export class ConfigView extends UIComponent {
     // Add Binding Button
     const addBtn = new Button("+ Add Keybinding", {
       onClick: () => this.addKeybindingRow("NORMAL", "", ""),
-      bg: "#1e293b",
-      hoverBg: "#334155",
-      color: "#38bdf8", // sky-400
+      bg: "#10221e",
+      hoverBg: "#18332d",
+      color: ACCENT,
       font: "600 14px Outfit, sans-serif",
       radius: 6,
     });
@@ -122,32 +130,33 @@ export class ConfigView extends UIComponent {
     this.livePreviewCard = new Card({
       width: 400,
       height: 420,
-      bg: "#0f172a", // slate-900
-      border: "#334155",
-      radius: 12,
+      bg: PANEL,
+      border: PANEL_STROKE,
+      radius: 16,
       padding: 15,
     });
     this.livePreviewCard.setPosition(width - 450, 80);
 
     const previewTitle = new Text(".vemrc.json", {
       font: "bold 14px JetBrains Mono, monospace",
-      color: "#64748b",
+      color: MUTED,
     }).setPosition(15, 15);
     this.livePreviewCard.add(previewTitle);
 
     this.previewText = new Text("", {
       font: "13px JetBrains Mono, monospace",
-      color: "#38bdf8", // sky-400
+      color: ACCENT,
       lineHeight: 20,
+      maxWidth: 360,
     }).setPosition(15, 45);
     this.livePreviewCard.add(this.previewText);
 
     // Copy Button
     this.copyBtn = new Button("Copy Configuration", {
       onClick: () => this.copyToClipboard(),
-      bg: "#8b5cf6", // violet-500
-      hoverBg: "#a78bfa",
-      color: "#ffffff",
+      bg: "#0f766e",
+      hoverBg: "#14b8a6",
+      color: "#ecfeff",
       font: "600 14px Outfit, sans-serif",
       radius: 8,
     });
@@ -196,8 +205,8 @@ export class ConfigView extends UIComponent {
 
     const delBtn = new Button("Delete", {
       onClick: () => this.removeKeybindingRow(keysInput),
-      bg: "#ef4444",
-      hoverBg: "#f87171",
+      bg: "#b42318",
+      hoverBg: "#dc2626",
       color: "#ffffff",
       font: "bold 12px sans-serif",
       radius: 4,
@@ -272,21 +281,63 @@ export class ConfigView extends UIComponent {
     this.width = w;
     this.height = h;
 
-    this.configStack.setPosition(50, 80);
+    const margin = w < 720 ? 24 : 50;
+    const twoColumn = w >= 1040;
+    const previewWidth = twoColumn
+      ? Math.min(430, Math.max(360, w * 0.32))
+      : Math.max(320, w - margin * 2);
+    const previewHeight = twoColumn ? Math.min(420, h - NAV_HEIGHT - 180) : 300;
+    const formWidth = twoColumn
+      ? w - previewWidth - margin * 3
+      : w - margin * 2;
+
+    for (const row of this.keybindings) {
+      const compactRow = formWidth < 470;
+      row.container.direction = compactRow ? "vertical" : "horizontal";
+      row.keysInput.width = compactRow ? Math.min(220, formWidth) : 120;
+      row.cmdInput.width = compactRow
+        ? Math.min(320, formWidth)
+        : Math.min(220, Math.max(180, formWidth - 214));
+      row.delBtn.width = compactRow ? 96 : 64;
+      row.container.layout();
+    }
+
+    this.configStack.setPosition(margin, NAV_HEIGHT + 36);
     this.configStack.layout();
 
-    this.livePreviewCard.setPosition(Math.max(450, w - 450), 80);
-    this.copyBtn.setPosition(Math.max(450, w - 450), 520);
+    this.livePreviewCard.width = previewWidth;
+    this.livePreviewCard.height = previewHeight;
+    this.previewText.setMaxWidth(previewWidth - 40);
+
+    const previewX = twoColumn ? w - previewWidth - margin : margin;
+    const previewY = twoColumn
+      ? NAV_HEIGHT + 40
+      : Math.min(h - previewHeight - 86, NAV_HEIGHT + 360);
+    this.livePreviewCard.setPosition(
+      previewX,
+      Math.max(NAV_HEIGHT + 40, previewY),
+    );
+    this.copyBtn.width = Math.min(220, previewWidth);
+    this.copyBtn.setPosition(
+      previewX,
+      this.livePreviewCard.y + previewHeight + 24,
+    );
   }
 
   public render(r: IRenderer): void {
     // Fill background area
     r.beginPath();
-    r.moveTo(0, 50);
-    r.lineTo(this.width, 50);
+    r.moveTo(0, NAV_HEIGHT);
+    r.lineTo(this.width, NAV_HEIGHT);
     r.lineTo(this.width, this.height);
     r.lineTo(0, this.height);
     r.closePath();
-    r.fill("#0b0f19");
+    r.fill(BG);
+
+    r.beginPath();
+    r.roundRect(32, NAV_HEIGHT + 24, Math.min(520, this.width - 64), 72, 18);
+    r.closePath();
+    r.fill("rgba(45, 212, 191, 0.055)");
+    r.stroke("rgba(45, 212, 191, 0.14)", 1);
   }
 }

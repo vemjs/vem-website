@@ -3,13 +3,20 @@ import { Scene } from "@vectojs/core";
 import { UIComponent, Button } from "@vectojs/ui";
 import type { IRenderer } from "@vectojs/core";
 import { WorkspaceExplorer } from "@vemjs/renderer-vecto";
-import { PluginRegistry } from "@vemjs/plugin-api";
-import { ConfigLoader } from "@vemjs/core";
+import type { PluginRegistry } from "@vemjs/plugin-api";
+import { ConfigLoader, type VemEditorState } from "@vemjs/core";
+import { PluginPanel } from "./plugins/PluginPanel";
+import { createOfficialPluginRegistry } from "./plugins/officialPlugins";
 
 // View Imports
 import { HomeView } from "./views/HomeView";
 import { DocsView } from "./views/DocsView";
 import { ConfigView } from "./views/ConfigView";
+
+const NAV_HEIGHT = 64;
+const DESKTOP_PLUGIN_PANEL_WIDTH = 360;
+const MIN_PLUGIN_PANEL_WIDTH = 320;
+const PLAYGROUND_PLUGIN_BREAKPOINT = 1160;
 
 class Navbar extends UIComponent {
   private homeBtn: Button;
@@ -21,30 +28,58 @@ class Navbar extends UIComponent {
   constructor(width: number, onNavigate: (route: string) => void) {
     super();
     this.width = width;
-    this.height = 50;
+    this.height = NAV_HEIGHT;
 
-    const createNavBtn = (label: string, x: number, route: string) => {
+    const createNavBtn = (label: string, route: string) => {
       const btn = new Button(label, {
         onClick: () => onNavigate(route),
         bg: "transparent",
-        hoverBg: "rgba(255, 255, 255, 0.05)",
-        color: "#94a3b8",
+        hoverBg: "rgba(45, 212, 191, 0.1)",
+        color: "#9fb7af",
         font: "600 14px Outfit, sans-serif",
-        radius: 4,
+        radius: 999,
       });
       btn.width = 120;
-      btn.height = 36;
-      btn.setPosition(x, 7);
+      btn.height = 38;
       this.add(btn);
       return btn;
     };
 
-    this.homeBtn = createNavBtn("Home", 150, "home");
-    this.playgroundBtn = createNavBtn("Playground", 280, "playground");
-    this.docsBtn = createNavBtn("Docs", 410, "docs");
-    this.configBtn = createNavBtn("Config Builder", 540, "config");
+    this.homeBtn = createNavBtn("Home", "home");
+    this.playgroundBtn = createNavBtn("Playground", "playground");
+    this.docsBtn = createNavBtn("Docs", "docs");
+    this.configBtn = createNavBtn("Config", "config");
 
     this.setRouteActive("home");
+    this.layoutButtons(width);
+  }
+
+  public resize(width: number): void {
+    this.width = width;
+    this.layoutButtons(width);
+  }
+
+  private layoutButtons(width: number): void {
+    const compact = width < 760;
+    const startX = compact ? 112 : 300;
+    const gap = compact ? 82 : 130;
+    const buttonWidth = compact ? 74 : 120;
+    const labels = compact
+      ? ["Home", "Play", "Docs", "Config"]
+      : ["Home", "Playground", "Docs", "Config"];
+    const buttons = [
+      this.homeBtn,
+      this.playgroundBtn,
+      this.docsBtn,
+      this.configBtn,
+    ];
+
+    for (let i = 0; i < buttons.length; i++) {
+      buttons[i].label = labels[i];
+      buttons[i].textWidth = labels[i].length * (compact ? 7 : 8);
+      buttons[i].width = buttonWidth;
+      buttons[i].setPosition(startX + i * gap, 13);
+    }
   }
 
   public setRouteActive(route: string): void {
@@ -59,35 +94,55 @@ class Navbar extends UIComponent {
     for (let i = 0; i < btns.length; i++) {
       const btn = btns[i];
       const isActive = routes[i] === route;
-      btn.color = isActive ? "#a78bfa" : "#94a3b8"; // violet-400 for active
+      btn.color = isActive ? "#2dd4bf" : "#9fb7af";
+      btn.bg = isActive ? "rgba(45, 212, 191, 0.12)" : "transparent";
     }
   }
 
   public render(r: IRenderer): void {
-    // Fill navbar background
     r.beginPath();
     r.moveTo(0, 0);
     r.lineTo(this.width, 0);
-    r.lineTo(this.width, 50);
-    r.lineTo(0, 50);
+    r.lineTo(this.width, NAV_HEIGHT);
+    r.lineTo(0, NAV_HEIGHT);
     r.closePath();
-    r.fill("#090d16");
-    r.stroke("#1f2937", 1.2);
+    r.fill("rgba(5, 13, 12, 0.96)");
 
-    // Draw Vem logo text
-    r.fillText("Vem", 20, 32, "bold 22px Outfit, sans-serif", "#ffffff");
-    r.fillText("run", 70, 30, "600 10px monospace", "#818cf8");
+    r.beginPath();
+    r.moveTo(0, NAV_HEIGHT);
+    r.lineTo(this.width, NAV_HEIGHT);
+    r.closePath();
+    r.stroke("rgba(45, 212, 191, 0.2)", 1.2);
 
-    // Draw bottom active indicator bar
+    r.beginPath();
+    r.roundRect(24, 16, 34, 32, 9);
+    r.closePath();
+    r.fill("#14342f");
+    r.stroke("rgba(45, 212, 191, 0.5)", 1);
+
+    r.fillText("V", 35, 39, "800 20px Outfit, sans-serif", "#2dd4bf");
+    r.fillText("Vem", 70, 39, "800 22px Outfit, sans-serif", "#edf7f3");
+    if (this.width >= 760) {
+      r.fillText(
+        "canvas-native editor",
+        118,
+        39,
+        "600 10px JetBrains Mono, monospace",
+        "#f4b860",
+      );
+    }
+
     const routes = ["home", "playground", "docs", "config"];
     const activeIdx = routes.indexOf(this.currentActiveRoute);
     if (activeIdx !== -1) {
-      const indicatorX = 150 + activeIdx * 130 + 10;
+      const compact = this.width < 760;
+      const indicatorX =
+        (compact ? 112 : 300) + activeIdx * (compact ? 82 : 130) + 14;
       r.beginPath();
-      r.moveTo(indicatorX, 48);
-      r.lineTo(indicatorX + 100, 48);
+      r.moveTo(indicatorX, 54);
+      r.lineTo(indicatorX + (compact ? 46 : 84), 54);
       r.closePath();
-      r.stroke("#8b5cf6", 2); // violet-500 underline
+      r.stroke("#2dd4bf", 2);
     }
   }
 }
@@ -103,7 +158,8 @@ if (canvas) {
   // Welcome Text for the Playground editor
   const welcomeText = `Welcome to Vem Playground!
 
-This is a live editor playground running 100% inside VectoJS canvas renderer.
+This is a live editor playground.
+It runs inside the VectoJS canvas renderer.
 
 Modal editing guides:
   - Press 'i' to enter INSERT mode. Type text.
@@ -114,12 +170,16 @@ Modal editing guides:
       - Type ':sp' for a horizontal split.
       - Type ':q' to close the active pane.
 
-To try loading local workspace config, click 'Open Folder' in the sidebar and select a project with a '.vemrc.json' or '.vemrc.js' file in its root!`;
+Official plugins are loaded on startup:
+  - Telescope opens a command/file picker.
+  - Lualine updates the statusline.
+  - Git, Treesitter, Autopairs, and Trim all run live.
+
+Click Plugin Lab actions on the right to smoke-test them.
+Use 'Open Folder' to load a workspace .vemrc.json/.vemrc.js.`;
 
   // 2. Instantiate Views
   let activeRoute = "playground";
-  let showNavbar = false;
-
   const homeView = new HomeView(
     canvas.width,
     canvas.height,
@@ -130,10 +190,45 @@ To try loading local workspace config, click 'Open Folder' in the sidebar and se
 
   const playgroundView = new WorkspaceExplorer(
     canvas.width,
-    canvas.height,
+    canvas.height - NAV_HEIGHT,
     welcomeText,
   );
-  playgroundView.setPosition(0, 0);
+  playgroundView.setPosition(0, NAV_HEIGHT);
+
+  const playgroundRegistries = new WeakMap<VemEditorState, PluginRegistry>();
+  const seedProjectFiles = (state: VemEditorState) => {
+    if (state.projectFiles.length > 0) return;
+    state.projectFiles = [
+      "src/main.ts",
+      "src/views/HomeView.ts",
+      "src/views/DocsView.ts",
+      "src/views/ConfigView.ts",
+      "package.json",
+      "README.md",
+    ];
+  };
+  const getActivePlaygroundState = () =>
+    playgroundView.getActiveEditorState() as VemEditorState | null;
+  const getPlaygroundRegistry = () => {
+    const activeState = getActivePlaygroundState();
+    if (!activeState) return null;
+    seedProjectFiles(activeState);
+
+    let registry = playgroundRegistries.get(activeState);
+    if (!registry) {
+      registry = createOfficialPluginRegistry(activeState);
+      playgroundRegistries.set(activeState, registry);
+    }
+    return registry;
+  };
+  getPlaygroundRegistry();
+
+  const pluginPanel = new PluginPanel(
+    DESKTOP_PLUGIN_PANEL_WIDTH,
+    canvas.height - NAV_HEIGHT,
+    getActivePlaygroundState,
+    getPlaygroundRegistry,
+  );
 
   // Hook workspace loader config logic
   playgroundView.onDidOpenDirectory(async (nodes, fsHandler) => {
@@ -151,7 +246,8 @@ To try loading local workspace config, click 'Open Folder' in the sidebar and se
             .getActiveLayout()
             ?.getActiveState();
           if (activeState) {
-            const registry = new PluginRegistry(activeState);
+            const registry = getPlaygroundRegistry();
+            if (!registry) return;
             const loader = new ConfigLoader(activeState);
             if (configNode.label.endsWith(".json")) {
               const config = JSON.parse(configContent);
@@ -173,25 +269,58 @@ To try loading local workspace config, click 'Open Folder' in the sidebar and se
 
   // 3. Navigation Bar (hidden by default)
   const navbar = new Navbar(canvas.width, (route) => navigate(route));
+  navbar.id = "navbar";
+
+  const layoutPlayground = (w: number, h: number) => {
+    const contentHeight = h - NAV_HEIGHT;
+    const panelWidth =
+      w >= PLAYGROUND_PLUGIN_BREAKPOINT
+        ? Math.max(
+            MIN_PLUGIN_PANEL_WIDTH,
+            Math.min(DESKTOP_PLUGIN_PANEL_WIDTH, w * 0.24),
+          )
+        : 0;
+
+    playgroundView.setPosition(0, NAV_HEIGHT);
+    playgroundView.width = w - panelWidth;
+    playgroundView.height = contentHeight;
+
+    pluginPanel.setPosition(w - panelWidth, NAV_HEIGHT);
+    pluginPanel.resize(panelWidth, contentHeight);
+  };
+
+  const mountRoute = (route: string) => {
+    if (route === "home") scene.add(homeView);
+    else if (route === "playground") {
+      layoutPlayground(canvas.width, canvas.height);
+      getPlaygroundRegistry();
+      scene.add(playgroundView);
+      if (canvas.width >= PLAYGROUND_PLUGIN_BREAKPOINT) scene.add(pluginPanel);
+    } else if (route === "docs") scene.add(docsView);
+    else if (route === "config") scene.add(configView);
+
+    scene.remove(navbar);
+    scene.add(navbar);
+  };
+
+  const unmountRoute = (route: string) => {
+    if (route === "home") scene.remove(homeView);
+    else if (route === "playground") {
+      scene.remove(playgroundView);
+      scene.remove(pluginPanel);
+    } else if (route === "docs") scene.remove(docsView);
+    else if (route === "config") scene.remove(configView);
+  };
 
   // 4. Routing function
   const navigate = (route: string) => {
     if (route === activeRoute) return;
 
-    // Remove active view
-    if (activeRoute === "home") scene.remove(homeView);
-    else if (activeRoute === "playground") scene.remove(playgroundView);
-    else if (activeRoute === "docs") scene.remove(docsView);
-    else if (activeRoute === "config") scene.remove(configView);
-
-    // Add new view
-    if (route === "home") scene.add(homeView);
-    else if (route === "playground") scene.add(playgroundView);
-    else if (route === "docs") scene.add(docsView);
-    else if (route === "config") scene.add(configView);
+    unmountRoute(activeRoute);
 
     activeRoute = route;
     navbar.setRouteActive(route);
+    mountRoute(route);
 
     // Sync hash in URL
     if (window.location.hash !== `#${route}`) {
@@ -220,31 +349,9 @@ To try loading local workspace config, click 'Open Folder' in the sidebar and se
   const validRoutes = ["home", "playground", "docs", "config"];
   activeRoute = validRoutes.includes(initialHash) ? initialHash : "home";
 
-  if (activeRoute === "home") {
-    scene.add(homeView);
-  } else if (activeRoute === "playground") {
-    scene.add(playgroundView);
-  } else if (activeRoute === "docs") {
-    scene.add(docsView);
-  } else if (activeRoute === "config") {
-    scene.add(configView);
-  }
-
   navbar.setRouteActive(activeRoute);
+  mountRoute(activeRoute);
   scene.start();
-
-  const toggleNavbar = () => {
-    showNavbar = !showNavbar;
-    if (showNavbar) {
-      scene.add(navbar);
-      playgroundView.setPosition(0, 50);
-      playgroundView.height = canvas.height - 50;
-    } else {
-      scene.remove(navbar);
-      playgroundView.setPosition(0, 0);
-      playgroundView.height = canvas.height;
-    }
-  };
 
   // 5. Canvas Event routing
   canvas.tabIndex = 0;
@@ -255,13 +362,6 @@ To try loading local workspace config, click 'Open Folder' in the sidebar and se
   });
 
   canvas.addEventListener("keydown", (e) => {
-    // F1 to toggle navigation bar
-    if (e.key === "F1") {
-      e.preventDefault();
-      toggleNavbar();
-      return;
-    }
-
     // Only route editor keys if we are in the playground view
     if (activeRoute !== "playground") return;
 
@@ -291,6 +391,7 @@ To try loading local workspace config, click 'Open Folder' in the sidebar and se
         else if (e.key === "v") mappedKey = "<C-v>";
       }
       activeState.handleKey(mappedKey);
+      activeLayout?.refreshActivePane();
     }
   });
 
@@ -301,17 +402,42 @@ To try loading local workspace config, click 'Open Folder' in the sidebar and se
     canvas.width = w;
     canvas.height = h;
 
-    navbar.width = w;
+    navbar.resize(w);
     homeView.reposition(w, h);
-    playgroundView.width = w;
-    playgroundView.height = showNavbar ? h - 50 : h;
+    layoutPlayground(w, h);
     docsView.reposition(w, h);
     configView.reposition(w, h);
 
     scene.resize(w, h);
+    scene.markDirty();
   };
   window.addEventListener("resize", handleResize);
 
   // Set initial sizes
   handleResize();
+
+  // 7. Devtools hook: ?debug attaches the VMT inspector and exposes a
+  // headless handle for agents/tests (forge convention).
+  if (new URLSearchParams(window.location.search).has("debug")) {
+    import("@vectojs/devtools").then(
+      ({ attachDevtools, auditScene, captureSnapshot }) => {
+        attachDevtools(scene);
+        // Documented audit exemptions (intentional stacking):
+        // - the fixed navbar overlays every routed view by design
+        // - card-overlay-* Buttons are invisible full-card click targets
+        const intentional = (e: { id: string }) =>
+          e.id === "navbar" || e.id.startsWith("card-overlay-");
+        (window as unknown as Record<string, unknown>).__vem = {
+          scene,
+          audit: () =>
+            auditScene(scene, {
+              ignoreOverlap: (a, b) => intentional(a) || intentional(b),
+            }),
+          snapshot: () => captureSnapshot(scene),
+          getActiveEditorState: getActivePlaygroundState,
+          navigate,
+        };
+      },
+    );
+  }
 }

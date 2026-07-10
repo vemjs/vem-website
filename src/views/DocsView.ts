@@ -9,6 +9,14 @@ import {
 } from "@vectojs/ui";
 import type { IRenderer } from "@vectojs/core";
 
+const NAV_HEIGHT = 64;
+const BG = "#06110f";
+const PANEL = "#0d1b18";
+const PANEL_STROKE = "#1d3b35";
+const ACCENT = "#2dd4bf";
+const TEXT = "#edf7f3";
+const MUTED = "#91aaa1";
+
 const DOC_PAGES: Record<string, string> = {
   intro: `# Introduction to Vem
 
@@ -123,27 +131,28 @@ export class DocsView extends UIComponent {
     this.panelGroup = new PanelGroup({
       direction: "horizontal",
       width: width,
-      height: height - 50, // reserve space for header offset
+      height: height - NAV_HEIGHT,
     });
 
-    this.sidebarPanel = new Panel({ minSize: 200, defaultSize: 0.25 });
+    this.sidebarPanel = new Panel({ minSize: 240, defaultSize: 0.22 });
     this.contentPanel = new Panel({ minSize: 400 });
 
     // 1. Sidebar items Stack
     this.sidebarStack = new Stack({ direction: "vertical", gap: 10 });
-    this.sidebarStack.setPosition(15, 20);
+    this.sidebarStack.setPosition(18, 112);
 
     const addSectionBtn = (id: string, label: string) => {
       const btn = new Button(label, {
         onClick: () => this.setSection(id),
-        bg: id === this.activeSection ? "#8b5cf6" : "#1e293b",
-        hoverBg: id === this.activeSection ? "#a78bfa" : "#334155",
-        color: "#ffffff",
+        bg: id === this.activeSection ? "rgba(45, 212, 191, 0.16)" : "#10221e",
+        hoverBg:
+          id === this.activeSection ? "rgba(45, 212, 191, 0.24)" : "#18332d",
+        color: id === this.activeSection ? ACCENT : TEXT,
         font: "600 14px Outfit, sans-serif",
-        radius: 6,
+        radius: 10,
       });
-      btn.width = 180;
-      btn.height = 36;
+      btn.width = 204;
+      btn.height = 38;
       (btn as any).sectionId = id; // tag
       this.sidebarStack.add(btn);
     };
@@ -157,7 +166,7 @@ export class DocsView extends UIComponent {
     this.sidebarPanel.add(this.sidebarStack);
 
     // 2. Content panel ScrollView + Markdown
-    const contentWidth = width * 0.75 - 40;
+    const contentWidth = Math.min(880, width - 360);
     this.mdRenderer = new Markdown(DOC_PAGES[this.activeSection], {
       maxWidth: contentWidth,
     });
@@ -165,9 +174,9 @@ export class DocsView extends UIComponent {
 
     this.scrollContainer = new ScrollView({
       width: contentWidth,
-      height: height - 90,
+      height: height - NAV_HEIGHT - 48,
     });
-    this.scrollContainer.setPosition(20, 20);
+    this.scrollContainer.setPosition(32, 28);
     this.scrollContainer.add(this.mdRenderer);
 
     this.contentPanel.add(this.scrollContainer);
@@ -176,7 +185,7 @@ export class DocsView extends UIComponent {
     this.panelGroup.addPanel(this.contentPanel);
     this.add(this.panelGroup);
 
-    this.panelGroup.setPosition(0, 50);
+    this.panelGroup.setPosition(0, NAV_HEIGHT);
   }
 
   public setSection(sectionId: string): void {
@@ -189,8 +198,9 @@ export class DocsView extends UIComponent {
       for (const btn of buttons) {
         if (btn instanceof Button) {
           const isCurrent = (btn as any).sectionId === sectionId;
-          btn.bg = isCurrent ? "#8b5cf6" : "#1e293b";
-          btn.hoverBg = isCurrent ? "#a78bfa" : "#334155";
+          btn.bg = isCurrent ? "rgba(45, 212, 191, 0.16)" : "#10221e";
+          btn.hoverBg = isCurrent ? "rgba(45, 212, 191, 0.24)" : "#18332d";
+          btn.color = isCurrent ? ACCENT : TEXT;
         }
       }
     }
@@ -201,32 +211,57 @@ export class DocsView extends UIComponent {
     this.height = h;
 
     this.panelGroup.width = w;
-    this.panelGroup.height = h - 50;
-    this.panelGroup.setPosition(0, 50);
+    this.panelGroup.height = h - NAV_HEIGHT;
+    this.panelGroup.setPosition(0, NAV_HEIGHT);
 
-    const newContentWidth = this.contentPanel.width - 40;
+    const newContentWidth = Math.min(
+      880,
+      Math.max(420, w - this.sidebarPanel.width - 96),
+    );
     this.scrollContainer.width = newContentWidth;
-    this.scrollContainer.height = h - 90;
+    this.scrollContainer.height = h - NAV_HEIGHT - 48;
 
     this.mdRenderer.maxWidth = newContentWidth - 20;
+    this.mdRenderer.setContent(DOC_PAGES[this.activeSection]);
+    this.scrollContainer.updateContentSize();
   }
 
   public render(r: IRenderer): void {
     // Fill documentation background area
     r.beginPath();
-    r.moveTo(0, 50);
-    r.lineTo(this.width, 50);
+    r.moveTo(0, NAV_HEIGHT);
+    r.lineTo(this.width, NAV_HEIGHT);
     r.lineTo(this.width, this.height);
     r.lineTo(0, this.height);
     r.closePath();
-    r.fill("#0b0f19"); // matching background slate
+    r.fill(BG);
 
-    // Gutter border separating sidebar and content
+    r.fillText(
+      "Docs",
+      32,
+      NAV_HEIGHT + 38,
+      "800 22px Outfit, sans-serif",
+      TEXT,
+    );
+    r.fillText(
+      "Runtime model, commands, configuration, and plugin authoring.",
+      32,
+      NAV_HEIGHT + 62,
+      "12px JetBrains Mono, monospace",
+      MUTED,
+    );
+
     const splitX = this.sidebarPanel.width;
     r.beginPath();
-    r.moveTo(splitX, 50);
+    r.roundRect(16, NAV_HEIGHT + 88, splitX - 32, 310, 18);
+    r.closePath();
+    r.fill(PANEL);
+    r.stroke(PANEL_STROKE, 1);
+
+    r.beginPath();
+    r.moveTo(splitX, NAV_HEIGHT);
     r.lineTo(splitX, this.height);
     r.closePath();
-    r.stroke("#1f2937", 1);
+    r.stroke("rgba(45, 212, 191, 0.14)", 1);
   }
 }
