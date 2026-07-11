@@ -4,7 +4,10 @@ import { WorkspaceExplorer } from "@vemjs/renderer-vecto";
 import type { PluginRegistry } from "@vemjs/plugin-api";
 import { ConfigLoader, VemEditorState } from "@vemjs/core";
 import { PluginPanel } from "./plugins/PluginPanel";
-import { createOfficialPluginRegistry } from "./plugins/officialPlugins";
+import {
+  createOfficialPluginRegistry,
+  activatePluginById,
+} from "./plugins/officialPlugins";
 import { HELP_TEXT, VEMRC_TEMPLATE } from "./help";
 
 // vem.run IS the editor — no landing page, no routes. Docs and config live
@@ -13,26 +16,6 @@ const DESKTOP_PLUGIN_PANEL_WIDTH = 360;
 const MIN_PLUGIN_PANEL_WIDTH = 320;
 const PLUGIN_PANEL_BREAKPOINT = 1160;
 
-const welcomeText = `Welcome to Vem — a canvas-native modal editor.
-
-This whole page is the editor. Type :help for the manual.
-
-Quick start:
-  - Press 'i' to enter INSERT mode, 'Escape' to return to NORMAL.
-  - Press 'v' for VISUAL mode, ':' for COMMAND mode.
-  - :vsp / :sp split the view, :q closes the active pane.
-  - :set rnu switches to relative line numbers.
-  - :help opens the reference manual in a split.
-  - :config opens a .vemrc.json template.
-
-Official plugins are loaded on startup:
-  - Telescope opens a command/file picker.
-  - Lualine drives the statusline below.
-  - Git, Treesitter, Autopairs, and Trim all run live.
-
-Click Plugin Lab actions on the right to smoke-test them.
-Use 'Open Folder' to load a workspace .vemrc.json/.vemrc.js.`;
-
 const canvas = document.getElementById("vem-canvas") as HTMLCanvasElement;
 if (canvas) {
   canvas.width = window.innerWidth;
@@ -40,11 +23,9 @@ if (canvas) {
 
   const scene = new Scene(canvas);
 
-  const playgroundView = new WorkspaceExplorer(
-    canvas.width,
-    canvas.height,
-    welcomeText,
-  );
+  // Boot like a fresh Vim: an empty buffer (the renderer draws the ~ column and
+  // the centered intro splash). Everything else is opt-in via commands.
+  const playgroundView = new WorkspaceExplorer(canvas.width, canvas.height, "");
 
   const playgroundRegistries = new WeakMap<VemEditorState, PluginRegistry>();
   const seedProjectFiles = (state: VemEditorState) => {
@@ -95,7 +76,9 @@ if (canvas) {
 
   // Panel visibility (issue: both side panels must be closable). The file tree
   // is owned by WorkspaceExplorer; the Plugin Lab is website chrome.
-  let pluginPanelUserHidden = false;
+  // Both side panels start closed — bare Vim. Open them with :Explorer and
+  // :PluginLab (or :plugins).
+  let pluginPanelUserHidden = true;
   const toggleFileTree = () => {
     playgroundView.toggleSidebar();
     scene.markDirty();
@@ -111,6 +94,16 @@ if (canvas) {
   VemEditorState.registerGlobalExCommand("NERDTree", toggleFileTree);
   VemEditorState.registerGlobalExCommand("PluginLab", togglePluginLab);
   VemEditorState.registerGlobalExCommand("plugins", togglePluginLab);
+
+  // Appearance-changing plugins are opt-in (like Vim's :syntax on).
+  const activate = (id: string) => () => {
+    const registry = getPlaygroundRegistry();
+    if (registry) activatePluginById(registry, id);
+    scene.markDirty();
+  };
+  VemEditorState.registerGlobalExCommand("Lualine", activate("lualine"));
+  VemEditorState.registerGlobalExCommand("Treesitter", activate("treesitter"));
+  VemEditorState.registerGlobalExCommand("syntax", activate("treesitter"));
 
   const pluginPanel = new PluginPanel(
     DESKTOP_PLUGIN_PANEL_WIDTH,
@@ -175,6 +168,9 @@ if (canvas) {
       scene.remove(pluginPanel);
     }
   };
+
+  // File tree closed on boot — opened with :Explorer.
+  playgroundView.setSidebarVisible(false);
 
   scene.add(playgroundView);
   layoutEditor(window.innerWidth, window.innerHeight);

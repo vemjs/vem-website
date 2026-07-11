@@ -39,19 +39,22 @@ EX COMMANDS
   :help        this manual in a split     :docs        alias for :help
   :config      open a .vemrc.json template buffer
   :Explorer    toggle the file tree       :PluginLab   toggle the plugin panel
+  :Lualine     enable the statusline       :syntax on   enable highlighting (Treesitter)
+  :set number  show line numbers           :set nonumber  hide (default)
 
 ==============================================================================
-PLUGINS (loaded on startup)
+PLUGINS
+
+  On by default:      Telescope, Git Signs, Autopairs, Trim, Layout Customizer
+  Opt-in (Vim-style): :Lualine (statusline), :syntax on / :Treesitter (colors)
 
   Telescope        floating file finder / command palette
-  Lualine          Vim-style statusline segments
-  Treesitter       token-aware syntax highlighting
   Git Signs        add/change/delete markers in the gutter
   Autopairs        auto-closes brackets and quotes while typing
   Trim Whitespace  strips trailing spaces on :w
   Layout Customizer  cycles sidebar/status-bar layout and themes
 
-  The Plugin Lab panel (wide viewports) smoke-tests each one live.
+  The Plugin Lab panel (:PluginLab) smoke-tests each one live.
 
 ==============================================================================
 CONFIGURATION

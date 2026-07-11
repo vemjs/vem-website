@@ -8,7 +8,7 @@
         "@vectojs/core": "^1.0.1",
         "@vectojs/devtools": "^0.3.0",
         "@vectojs/ui": "^1.1.2",
-        "@vemjs/core": "^0.1.9",
+        "@vemjs/core": "^0.1.10",
         "@vemjs/plugin-api": "^0.1.4",
         "@vemjs/plugin-autopairs": "^0.1.1",
         "@vemjs/plugin-git": "^0.1.2",
@@ -17,7 +17,7 @@
         "@vemjs/plugin-telescope": "^0.1.1",
         "@vemjs/plugin-treesitter": "^0.1.1",
         "@vemjs/plugin-trim-whitespace": "^0.1.1",
-        "@vemjs/renderer-vecto": "^0.1.8",
+        "@vemjs/renderer-vecto": "^0.1.9",
       },
       "devDependencies": {
         "oxlint": "^1.72.0",
@@ -116,7 +116,7 @@
 
     "@vectojs/ui": ["@vectojs/ui@1.1.3", "", { "dependencies": { "marked": "^18.0.5" }, "peerDependencies": { "@vectojs/core": ">=0.1.0" } }, "sha512-E8GZcqJpYY8hfkTVLEiidtGpUMo/HrsZnTkbBqy+oh1YCZ8MJ0TVE6V+PeGdiV73QPDqfgX3wWlFggZgQbH9GQ=="],
 
-    "@vemjs/core": ["@vemjs/core@0.1.9", "", {}, "sha512-pLmyoz8vizMXzmbGqpYEQdwhtz01JHVwQ91szHYqqCBg23x/BwUzB8Y+4Y7jV4WdIb5kv4o9UZeLPWf04GW4Eg=="],
+    "@vemjs/core": ["@vemjs/core@0.1.10", "", {}, "sha512-z2mxDHAIN2ZqUGfXlgbAxBPdK4ojcmngMKB3dWQNR2kAAwVWyvkcVGxPiIyl1Wk2LfRsiVPj+DIRg7NFmwSHoQ=="],
 
     "@vemjs/plugin-api": ["@vemjs/plugin-api@0.1.4", "", { "dependencies": { "@vemjs/core": "^0.1.4" } }, "sha512-wLlWlpSuMDVibyLSMUqqiImvWiCadLgV+sCGK4K05wzLWpV1r4GN7mSrt03DdDKiQVyOwwW49auO2v71VSdyuA=="],
 
@@ -134,7 +134,7 @@
 
     "@vemjs/plugin-trim-whitespace": ["@vemjs/plugin-trim-whitespace@0.1.1", "", { "peerDependencies": { "@vemjs/core": "^0.1.4", "@vemjs/plugin-api": "^0.1.4" } }, "sha512-DdKXoWRiExN0Kjz79MqfyzVBOhdz7ww/GS4CV8a4whmSKoVU3suKdquLdEsii9x6IIPO1AC+5kDovEftGH2GPg=="],
 
-    "@vemjs/renderer-vecto": ["@vemjs/renderer-vecto@0.1.8", "", { "dependencies": { "@vectojs/core": "^1.0.1", "@vectojs/ui": "^1.1.3", "@vemjs/core": "^0.1.8" } }, "sha512-envoPKn2CUzG6fpdbkV+vDbZ3T7N9IEfmXNE8+hwOHjSop93D4Lfp/Oamb+VKM+CFmrLOg3EpVNFQoAkaVzpPQ=="],
+    "@vemjs/renderer-vecto": ["@vemjs/renderer-vecto@0.1.9", "", { "dependencies": { "@vectojs/core": "^1.0.1", "@vectojs/ui": "^1.1.3", "@vemjs/core": "^0.1.10" } }, "sha512-kdqeRblj+STnN8F2ZJkCSDK0h4daG699VPmRTlOgQKytXUNqKr5Xv/cby/Ddudok8qM4CfnMovCCzilDR3PRTw=="],
 
     "detect-libc": ["detect-libc@2.1.2", "", {}, "sha512-Btj2BOOO83o3WyH59e8MgXsxEQVcarkUOpEYrubB0urwnN10yQ364rsiByU11nZlqWYZm05i/of7io4mzihBtQ=="],
 
