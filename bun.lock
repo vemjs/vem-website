@@ -8,7 +8,7 @@
         "@vectojs/core": "^1.5.0",
         "@vectojs/devtools": "^0.4.0",
         "@vectojs/ui": "^1.7.1",
-        "@vemjs/core": "^0.1.11",
+        "@vemjs/core": "^0.1.12",
         "@vemjs/plugin-api": "^0.1.4",
         "@vemjs/plugin-autopairs": "^0.1.1",
         "@vemjs/plugin-git": "^0.1.2",
@@ -17,7 +17,7 @@
         "@vemjs/plugin-telescope": "^0.1.1",
         "@vemjs/plugin-treesitter": "^0.1.1",
         "@vemjs/plugin-trim-whitespace": "^0.1.1",
-        "@vemjs/renderer-vecto": "^0.1.12",
+        "@vemjs/renderer-vecto": "^0.1.13",
       },
       "devDependencies": {
         "oxlint": "^1.72.0",
@@ -116,7 +116,7 @@
 
     "@vectojs/ui": ["@vectojs/ui@1.7.1", "", { "dependencies": { "marked": "^18.0.6", "mathjax-full": "^3.2.2" }, "peerDependencies": { "@vectojs/core": ">=1.0.0 <2.0.0" } }, "sha512-XyzelSfyPdfWBineI5IT/O52oLHPobrS4yZhsUTCJMueM8RuN8XLKMqZfhSY2XTGobgi3nCwRTmWQvdQMYuuvA=="],
 
-    "@vemjs/core": ["@vemjs/core@0.1.11", "", {}, "sha512-zIlmhUEZcHMKaI0Y8VFawJwctNT2nHYLV/g2lGuTbV4dGG89RiaUVsSHQF7YCWTJJDunlk7uJ5u81qfPtDGo0w=="],
+    "@vemjs/core": ["@vemjs/core@0.1.12", "", {}, "sha512-6Tm4lcGQTHuyhR8TrqkL0ju6thuOPbhY856RHr0gvKJOyhipGuNv3FS3kbmz2fHVmRCNZNLzCys3kyxDYhDdbA=="],
 
     "@vemjs/plugin-api": ["@vemjs/plugin-api@0.1.4", "", { "dependencies": { "@vemjs/core": "^0.1.4" } }, "sha512-wLlWlpSuMDVibyLSMUqqiImvWiCadLgV+sCGK4K05wzLWpV1r4GN7mSrt03DdDKiQVyOwwW49auO2v71VSdyuA=="],
 
@@ -134,7 +134,7 @@
 
     "@vemjs/plugin-trim-whitespace": ["@vemjs/plugin-trim-whitespace@0.1.1", "", { "peerDependencies": { "@vemjs/core": "^0.1.4", "@vemjs/plugin-api": "^0.1.4" } }, "sha512-DdKXoWRiExN0Kjz79MqfyzVBOhdz7ww/GS4CV8a4whmSKoVU3suKdquLdEsii9x6IIPO1AC+5kDovEftGH2GPg=="],
 
-    "@vemjs/renderer-vecto": ["@vemjs/renderer-vecto@0.1.12", "", { "dependencies": { "@vectojs/core": "^1.5.0", "@vectojs/ui": "^1.7.1", "@vemjs/core": "^0.1.11" } }, "sha512-1J6S0eorlxvNuxboLpWwOt39oUXDdqzm+sL9TjBeeJrFjsoMwRZFQRQBRILNxmET1y71mIZJQ+vltewWfSH/jg=="],
+    "@vemjs/renderer-vecto": ["@vemjs/renderer-vecto@0.1.13", "", { "dependencies": { "@vectojs/core": "^1.5.0", "@vectojs/ui": "^1.7.1", "@vemjs/core": "^0.1.12" } }, "sha512-ZDuhRK1ibr7mnbJoJLencODbLG2Q6m66babUF60Kn6vQLaEEKXt4Er99k3X84ekuWg1dTckqARn47Gwv/oYhhg=="],
 
     "@xmldom/xmldom": ["@xmldom/xmldom@0.9.10", "", {}, "sha512-A9gOqLdi6cV4ibazAjcQufGj0B1y/vDqYrcuP6d/6x8P27gRS8643Dj9o1dEKtB6O7fwxb2FgBmJS2mX7gpvdw=="],
 

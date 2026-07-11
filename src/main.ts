@@ -1,6 +1,10 @@
 import "./style.css";
 import { Scene } from "@vectojs/core";
-import { WorkspaceExplorer } from "@vemjs/renderer-vecto";
+import {
+  WorkspaceExplorer,
+  CTRL_VIM_KEYS,
+  PREVENT_CTRL_KEYS,
+} from "@vemjs/renderer-vecto";
 import type { PluginRegistry } from "@vemjs/plugin-api";
 import { ConfigLoader, VemEditorState } from "@vemjs/core";
 import { PluginPanel } from "./plugins/PluginPanel";
@@ -201,21 +205,11 @@ if (canvas) {
     return t instanceof HTMLElement && t !== canvas && t !== document.body;
   };
 
-  // Ctrl-combinations Vim owns → the key we feed the state machine. The
-  // browser assigns most of these to its own actions (Ctrl-D bookmark,
-  // Ctrl-F find, Ctrl-S save, Ctrl-P print, Ctrl-U view-source…), so a modal
-  // editor MUST preventDefault them or the page hijacks the keystroke.
-  const CTRL_VIM_KEYS: Record<string, string> = {
-    r: "<C-r>", // redo
-    v: "<C-v>", // visual block
-    d: "<C-d>", // half page down
-    u: "<C-u>", // half page up
-    f: "<C-f>", // page down
-    b: "<C-b>", // page up
-    e: "<C-e>", // scroll line down
-    y: "<C-y>", // scroll line up
-    o: "<C-o>", // (reserved: jumplist) — captured so the browser open dialog stays shut
-  };
+  // Ctrl-combinations Vim owns → the key we feed the state machine. Sourced
+  // from @vemjs/renderer-vecto so this table can never drift from the one a
+  // VemEditorEntity uses on its own a11y textarea's native keydown — a
+  // second, smaller local copy here is exactly how Ctrl-D/U/F/B/E/Y ended up
+  // hijacked by the browser whenever a pane (not the window) had DOM focus.
   // Keys we always keep the browser from hijacking while the editor has focus.
   const PREVENT_PLAIN = new Set([
     "Space",
@@ -243,7 +237,7 @@ if (canvas) {
       if (vimKey) {
         mappedKey = vimKey;
         e.preventDefault();
-      } else if (["s", "p", "g", "j", "k", "l"].includes(e.key.toLowerCase())) {
+      } else if (PREVENT_CTRL_KEYS.has(e.key.toLowerCase())) {
         // Editor-relevant browser shortcuts we suppress but don't yet map
         // (save/print/find-next…). Ctrl-W/T/N stay native — browsers ignore
         // preventDefault on those, and blocking tab/window control is hostile.
