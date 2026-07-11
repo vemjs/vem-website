@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it } from "bun:test";
 import { VemEditorState } from "@vemjs/core";
 import {
+  activatePluginById,
   createOfficialPluginRegistry,
   officialPlugins,
 } from "./officialPlugins";
@@ -32,6 +33,13 @@ describe("official Playground plugins", () => {
       "treesitter",
       "trim-whitespace",
     ]);
+
+    // lualine and treesitter are deferred (Vim-style opt-in); the registry
+    // boots without them, and :Lualine / :syntax on activate them on demand.
+    expect(editor.highlightLine).toBeUndefined();
+    expect(activatePluginById(registry, "lualine")).toBe(true);
+    expect(activatePluginById(registry, "treesitter")).toBe(true);
+    expect(activatePluginById(registry, "no-such-plugin")).toBe(false);
 
     editor.handleKey("i");
     editor.handleKey("(");

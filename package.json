@@ -13,10 +13,10 @@
     "lint": "oxlint ."
   },
   "dependencies": {
-    "@vectojs/core": "^1.0.1",
-    "@vectojs/ui": "^1.1.2",
-    "@vectojs/devtools": "^0.3.0",
-    "@vemjs/core": "^0.1.10",
+    "@vectojs/core": "^1.4.0",
+    "@vectojs/ui": "^1.6.1",
+    "@vectojs/devtools": "^0.3.1",
+    "@vemjs/core": "^0.1.11",
     "@vemjs/plugin-api": "^0.1.4",
     "@vemjs/plugin-autopairs": "^0.1.1",
     "@vemjs/plugin-git": "^0.1.2",
@@ -25,7 +25,7 @@
     "@vemjs/plugin-telescope": "^0.1.1",
     "@vemjs/plugin-treesitter": "^0.1.1",
     "@vemjs/plugin-trim-whitespace": "^0.1.1",
-    "@vemjs/renderer-vecto": "^0.1.9"
+    "@vemjs/renderer-vecto": "^0.1.10"
   },
   "devDependencies": {
     "oxlint": "^1.72.0",
