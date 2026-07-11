@@ -185,6 +185,16 @@ if (canvas) {
     canvas.focus();
   });
 
+  // Clicking non-focusable chrome (tab strip, panels — now covered by the
+  // engine's pointer-events:auto projection overlay) drops focus to <body>,
+  // where neither the canvas listener nor the entity path hears keys. The
+  // router therefore lives on window; engine-owned focus targets (the a11y
+  // textarea, devtools inputs) keep exclusive ownership of their keys.
+  const engineOwnsKeys = (e: KeyboardEvent): boolean => {
+    const t = e.target;
+    return t instanceof HTMLElement && t !== canvas && t !== document.body;
+  };
+
   // Ctrl-combinations Vim owns → the key we feed the state machine. The
   // browser assigns most of these to its own actions (Ctrl-D bookmark,
   // Ctrl-F find, Ctrl-S save, Ctrl-P print, Ctrl-U view-source…), so a modal
@@ -212,7 +222,8 @@ if (canvas) {
     "/", // Vim search; also Chrome quick-find in some setups
   ]);
 
-  canvas.addEventListener("keydown", (e) => {
+  window.addEventListener("keydown", (e) => {
+    if (engineOwnsKeys(e)) return;
     // IME composition produces 'Process'/composing keydowns — feeding them
     // to the state machine corrupts the buffer. The composed text arrives
     // through the projected textarea instead.
