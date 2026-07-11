@@ -24,6 +24,8 @@ MOTIONS (NORMAL / VISUAL)
   dw dd yy p   delete word / delete line / yank line / paste
   u Ctrl-r     undo / redo
   x            delete char under cursor
+  Ctrl-d/u     half page down / up      Ctrl-f/b   full page down / up
+  q{reg} … q   record a macro           @{reg} @@  replay / repeat macro
 
 ==============================================================================
 EX COMMANDS
@@ -32,9 +34,11 @@ EX COMMANDS
   :q           close the active pane
   :vsp         vertical split  (panes side-by-side)
   :sp          horizontal split (panes stacked)
+  :q!          close without saving       :wq :x       write then close
   :set rnu     relative line numbers      :set nornu   absolute (default)
   :help        this manual in a split     :docs        alias for :help
   :config      open a .vemrc.json template buffer
+  :Explorer    toggle the file tree       :PluginLab   toggle the plugin panel
 
 ==============================================================================
 PLUGINS (loaded on startup)
@@ -53,7 +57,8 @@ PLUGINS (loaded on startup)
 CONFIGURATION
 
   Vem loads .vemrc.json or .vemrc.js from a workspace folder opened with
-  'Open Folder' in the sidebar. Try :config for a commented template.
+  'Open Folder' in the sidebar. 'Open File' opens a single file. Edits to a
+  file opened from disk write back on :w. Try :config for a template.
 
   Project home:  https://github.com/vemjs        Site: https://vem.run
 `;

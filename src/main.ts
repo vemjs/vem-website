@@ -93,6 +93,25 @@ if (canvas) {
     openSplitWithText(VEMRC_TEMPLATE),
   );
 
+  // Panel visibility (issue: both side panels must be closable). The file tree
+  // is owned by WorkspaceExplorer; the Plugin Lab is website chrome.
+  let pluginPanelUserHidden = false;
+  const toggleFileTree = () => {
+    playgroundView.toggleSidebar();
+    scene.markDirty();
+  };
+  const togglePluginLab = () => {
+    pluginPanelUserHidden = !pluginPanelUserHidden;
+    // Logical (CSS) size — canvas.width is the DPR-scaled backing store.
+    layoutEditor(window.innerWidth, window.innerHeight);
+    scene.markDirty();
+  };
+  VemEditorState.registerGlobalExCommand("Explorer", toggleFileTree);
+  VemEditorState.registerGlobalExCommand("tree", toggleFileTree);
+  VemEditorState.registerGlobalExCommand("NERDTree", toggleFileTree);
+  VemEditorState.registerGlobalExCommand("PluginLab", togglePluginLab);
+  VemEditorState.registerGlobalExCommand("plugins", togglePluginLab);
+
   const pluginPanel = new PluginPanel(
     DESKTOP_PLUGIN_PANEL_WIDTH,
     canvas.height,
@@ -136,7 +155,7 @@ if (canvas) {
 
   const layoutEditor = (w: number, h: number) => {
     const panelWidth =
-      w >= PLUGIN_PANEL_BREAKPOINT
+      w >= PLUGIN_PANEL_BREAKPOINT && !pluginPanelUserHidden
         ? Math.max(
             MIN_PLUGIN_PANEL_WIDTH,
             Math.min(DESKTOP_PLUGIN_PANEL_WIDTH, w * 0.24),
@@ -158,7 +177,7 @@ if (canvas) {
   };
 
   scene.add(playgroundView);
-  layoutEditor(canvas.width, canvas.height);
+  layoutEditor(window.innerWidth, window.innerHeight);
   scene.start();
 
   // --- Keyboard routing: canvas keeps focus; the projected a11y textarea
@@ -170,36 +189,64 @@ if (canvas) {
     canvas.focus();
   });
 
+  // Ctrl-combinations Vim owns → the key we feed the state machine. The
+  // browser assigns most of these to its own actions (Ctrl-D bookmark,
+  // Ctrl-F find, Ctrl-S save, Ctrl-P print, Ctrl-U view-source…), so a modal
+  // editor MUST preventDefault them or the page hijacks the keystroke.
+  const CTRL_VIM_KEYS: Record<string, string> = {
+    r: "<C-r>", // redo
+    v: "<C-v>", // visual block
+    d: "<C-d>", // half page down
+    u: "<C-u>", // half page up
+    f: "<C-f>", // page down
+    b: "<C-b>", // page up
+    e: "<C-e>", // scroll line down
+    y: "<C-y>", // scroll line up
+    o: "<C-o>", // (reserved: jumplist) — captured so the browser open dialog stays shut
+  };
+  // Keys we always keep the browser from hijacking while the editor has focus.
+  const PREVENT_PLAIN = new Set([
+    "Space",
+    "ArrowUp",
+    "ArrowDown",
+    "ArrowLeft",
+    "ArrowRight",
+    "Tab",
+    "Backspace",
+    "/", // Vim search; also Chrome quick-find in some setups
+  ]);
+
   canvas.addEventListener("keydown", (e) => {
     // IME composition produces 'Process'/composing keydowns — feeding them
     // to the state machine corrupts the buffer. The composed text arrives
     // through the projected textarea instead.
     if (e.isComposing || e.key === "Process") return;
 
-    if (
-      [
-        "Space",
-        "ArrowUp",
-        "ArrowDown",
-        "ArrowLeft",
-        "ArrowRight",
-        "Tab",
-        "Backspace",
-      ].includes(e.key) ||
-      (e.key === "r" && e.ctrlKey) ||
-      (e.key === "v" && e.ctrlKey)
-    ) {
+    const ctrl = e.ctrlKey || e.metaKey;
+    let mappedKey = e.key;
+
+    if (ctrl && !e.altKey) {
+      const vimKey = CTRL_VIM_KEYS[e.key.toLowerCase()];
+      if (vimKey) {
+        mappedKey = vimKey;
+        e.preventDefault();
+      } else if (["s", "p", "g", "j", "k", "l"].includes(e.key.toLowerCase())) {
+        // Editor-relevant browser shortcuts we suppress but don't yet map
+        // (save/print/find-next…). Ctrl-W/T/N stay native — browsers ignore
+        // preventDefault on those, and blocking tab/window control is hostile.
+        e.preventDefault();
+        return;
+      } else {
+        // Let genuine browser combos (copy/paste/Ctrl-A, devtools) pass through.
+        return;
+      }
+    } else if (PREVENT_PLAIN.has(e.key)) {
       e.preventDefault();
     }
 
     const activeLayout = playgroundView.getWorkspace().getActiveLayout();
     const activeState = activeLayout?.getActiveState();
     if (activeState) {
-      let mappedKey = e.key;
-      if (e.ctrlKey) {
-        if (e.key === "r") mappedKey = "<C-r>";
-        else if (e.key === "v") mappedKey = "<C-v>";
-      }
       activeState.handleKey(mappedKey);
       activeLayout?.refreshActivePane();
     }
