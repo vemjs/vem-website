@@ -25,7 +25,13 @@ if (canvas) {
 
   // Boot like a fresh Vim: an empty buffer (the renderer draws the ~ column and
   // the centered intro splash). Everything else is opt-in via commands.
-  const playgroundView = new WorkspaceExplorer(canvas.width, canvas.height, "");
+  // Logical (CSS) size — canvas.width is the DPR-scaled backing store and
+  // seeds the workspace at dpr× the real viewport.
+  const playgroundView = new WorkspaceExplorer(
+    window.innerWidth,
+    window.innerHeight,
+    "",
+  );
 
   const playgroundRegistries = new WeakMap<VemEditorState, PluginRegistry>();
   const seedProjectFiles = (state: VemEditorState) => {
@@ -107,7 +113,7 @@ if (canvas) {
 
   const pluginPanel = new PluginPanel(
     DESKTOP_PLUGIN_PANEL_WIDTH,
-    canvas.height,
+    window.innerHeight,
     getActivePlaygroundState,
     getPlaygroundRegistry,
   );
