@@ -30,15 +30,21 @@ bun test src
 
 ## Deployment
 
-Deploys to Cloudflare Pages (project `vem`) — **manual, not automatic on push**:
+Deploys to Cloudflare Pages (project `vem`) **automatically on every push to `main`** — CI's
+`test` job builds and uploads `dist/`, then the `deploy` job pushes it via
+[`cloudflare/wrangler-action`](https://github.com/cloudflare/wrangler-action) using the org's
+`CLOUDFLARE_ACCOUNT_ID`/`CLOUDFLARE_API_TOKEN` secrets. Nothing to run by hand — merging to `main`
+is the deploy.
+
+For a manual/local deploy (hotfix, or testing the deploy path itself) `just deploy` still works:
 
 ```bash
 just deploy   # verify (test + lint + format:check) → build → deploy
 ```
 
 `scripts/deploy-pages.sh` wraps `wrangler pages deploy` and reaps its never-exiting process once
-the `Deployment complete!` marker appears. Always verify the live site afterward — check for the
-specific new strings/behavior you just shipped, not just that the deploy command exited 0.
+the `Deployment complete!` marker appears. Either way, verify the live site afterward — check for
+the specific new strings/behavior you just shipped, not just that the deploy exited 0.
 
 ## Related repositories
 
