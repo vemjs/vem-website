@@ -6,7 +6,11 @@ body,
   width: 100%;
   height: 100%;
   overflow: hidden;
-  background-color: #090d16;
+  /* Matches @vemjs/core's DEFAULT_THEME.bg (#000000) — any page-background
+     pixel exposed before the canvas paints, or in a sub-pixel gap, should be
+     indistinguishable from the editor's own near-black, not a visibly
+     different blue-tinted shade. */
+  background-color: #000000;
   font-family:
     "Outfit",
     -apple-system,

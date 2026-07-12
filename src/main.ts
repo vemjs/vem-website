@@ -182,6 +182,45 @@ if (canvas) {
   // File tree closed on boot — opened with :Explorer.
   playgroundView.setSidebarVisible(false);
 
+  // --- Persist open buffers across reloads. The web build has no backing
+  // filesystem to reopen from, so a bare refresh previously wiped every
+  // unsaved edit — restoring happens before the first scene.start() render
+  // so there's no empty-then-restored flash.
+  const PERSIST_KEY = "vem.buffers.v1";
+  const restoreSnapshot = ():
+    | { label: string; text: string; active: boolean }[]
+    | null => {
+    try {
+      const raw = localStorage.getItem(PERSIST_KEY);
+      if (!raw) return null;
+      const parsed = JSON.parse(raw);
+      return Array.isArray(parsed) ? parsed : null;
+    } catch {
+      return null;
+    }
+  };
+  const saveSnapshot = () => {
+    try {
+      localStorage.setItem(
+        PERSIST_KEY,
+        JSON.stringify(playgroundView.getWorkspace().getBuffersSnapshot()),
+      );
+    } catch {
+      // Storage full or unavailable (private browsing) — losing autosave is
+      // better than crashing the editor over it.
+    }
+  };
+
+  const savedSnapshot = restoreSnapshot();
+  if (savedSnapshot) {
+    playgroundView.getWorkspace().restoreBuffersSnapshot(savedSnapshot);
+  }
+  setInterval(saveSnapshot, 2000);
+  window.addEventListener("beforeunload", saveSnapshot);
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) saveSnapshot();
+  });
+
   scene.add(playgroundView);
   layoutEditor(window.innerWidth, window.innerHeight);
   scene.start();

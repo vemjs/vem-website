@@ -4,7 +4,7 @@
   "description": "Next-generation modal text editor running 100% in GPU canvas pixels",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#0f172a",
+  "background_color": "#000000",
   "theme_color": "#8b5cf6",
   "orientation": "any",
   "icons": [
