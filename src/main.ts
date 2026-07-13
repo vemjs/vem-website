@@ -123,36 +123,32 @@ if (canvas) {
   );
 
   // Hook workspace loader config logic
-  playgroundView.onDidOpenDirectory(async (nodes, fsHandler) => {
+  playgroundView.onDidOpenDirectory(async (nodes, dir) => {
     const configNode = nodes.find(
       (node) => node.label === ".vemrc.json" || node.label === ".vemrc.js",
     );
-    if (configNode) {
-      const fileHandle = fsHandler.getFileHandle(configNode.id);
-      if (fileHandle) {
-        try {
-          const configContent = await fsHandler.readFile(fileHandle);
-          console.log(`Found config file: ${configNode.label}, loading...`);
-          const activeState = playgroundView
-            .getWorkspace()
-            .getActiveLayout()
-            ?.getActiveState();
-          if (activeState) {
-            const registry = getPlaygroundRegistry();
-            if (!registry) return;
-            const loader = new ConfigLoader(activeState);
-            if (configNode.label.endsWith(".json")) {
-              const config = JSON.parse(configContent);
-              await loader.loadConfigFromObject(config, registry);
-            } else {
-              await loader.loadConfigFromJsString(configContent, registry);
-            }
-            console.log("Configuration successfully loaded into workspace.");
-          }
-        } catch (err) {
-          console.error("Failed to load workspace config:", err);
+    if (!configNode) return;
+    try {
+      const configContent = await dir.readFile(configNode.id);
+      console.log(`Found config file: ${configNode.label}, loading...`);
+      const activeState = playgroundView
+        .getWorkspace()
+        .getActiveLayout()
+        ?.getActiveState();
+      if (activeState) {
+        const registry = getPlaygroundRegistry();
+        if (!registry) return;
+        const loader = new ConfigLoader(activeState);
+        if (configNode.label.endsWith(".json")) {
+          const config = JSON.parse(configContent);
+          await loader.loadConfigFromObject(config, registry);
+        } else {
+          await loader.loadConfigFromJsString(configContent, registry);
         }
+        console.log("Configuration successfully loaded into workspace.");
       }
+    } catch (err) {
+      console.error("Failed to load workspace config:", err);
     }
   });
 
