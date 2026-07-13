@@ -184,8 +184,7 @@ if (canvas) {
   // so there's no empty-then-restored flash.
   const PERSIST_KEY = "vem.buffers.v1";
   const restoreSnapshot = ():
-    | { label: string; text: string; active: boolean }[]
-    | null => {
+    { label: string; text: string; active: boolean }[] | null => {
     try {
       const raw = localStorage.getItem(PERSIST_KEY);
       if (!raw) return null;
