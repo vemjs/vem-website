@@ -229,6 +229,20 @@ if (canvas) {
     canvas.focus();
   });
 
+  // Vim mouse=a owns the right button (it extends/starts a selection); the
+  // native browser menu popping over the editor is never wanted. Bind on
+  // window so the a11y projection overlay (which sits above the canvas and
+  // receives the raw event) is covered too.
+  window.addEventListener("contextmenu", (e) => {
+    if (
+      e.target === canvas ||
+      (e.target instanceof HTMLElement &&
+        canvas.parentElement?.contains(e.target))
+    ) {
+      e.preventDefault();
+    }
+  });
+
   // Clicking non-focusable chrome (tab strip, panels — now covered by the
   // engine's pointer-events:auto projection overlay) drops focus to <body>,
   // where neither the canvas listener nor the entity path hears keys. The
