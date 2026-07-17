@@ -27,6 +27,66 @@ if (canvas) {
 
   const scene = new Scene(canvas);
 
+  const playgroundRegistries = new WeakMap<VemEditorState, PluginRegistry>();
+  // The real file list once a directory is open (WorkspaceExplorer fills the
+  // active state on open; this snapshot covers states created afterwards).
+  let workspaceProjectFiles: string[] | null = null;
+  const seedProjectFiles = (state: VemEditorState) => {
+    if (state.projectFiles.length > 0) return;
+    state.projectFiles = workspaceProjectFiles ?? [
+      "src/main.ts",
+      "src/help.ts",
+      "src/plugins/PluginPanel.ts",
+      "package.json",
+      "README.md",
+    ];
+  };
+
+  // Telescope's find-files goes through here (plugin-api openFile
+  // capability): read from the open directory when there is one; without a
+  // directory the demo list has no backing content, so fall back to the
+  // legacy relabel.
+  const openFileByPath = async (path: string) => {
+    const dir = playgroundView.getOpenDirectory();
+    if (dir) {
+      try {
+        const content = await dir.readFile(path);
+        const label = path.split("/").pop() ?? path;
+        playgroundView.openFileBuffer(
+          content,
+          label,
+          dir.saveFile ? (text) => dir.saveFile!(path, text) : undefined,
+        );
+        scene.markDirty();
+        return;
+      } catch (err) {
+        console.error(`Failed to open ${path}:`, err);
+      }
+    }
+    getActivePlaygroundState()?.setFileUri(path);
+  };
+
+  const ensureRegistry = (state: VemEditorState): PluginRegistry => {
+    seedProjectFiles(state);
+    let registry = playgroundRegistries.get(state);
+    if (!registry) {
+      registry = createOfficialPluginRegistry(state, {
+        openFile: openFileByPath,
+      });
+      playgroundRegistries.set(state, registry);
+    }
+    return registry;
+  };
+
+  // Every state — the boot buffer, each `:vsp`/`:sp` pane, restored
+  // snapshots, Plugin Lab's scratch — gets its plugins at construction.
+  // Before this hook, only the buffer active at boot (or at a `:Lualine`/
+  // vemrc/demo moment) had a registry, so new panes silently lost autopairs,
+  // trim-on-save, and every other plugin (2026-07-16 audit, bug 1).
+  VemEditorState.onDidCreateState((state) => {
+    ensureRegistry(state);
+  });
+
   // Boot like a fresh Vim: an empty buffer (the renderer draws the ~ column and
   // the centered intro splash). Everything else is opt-in via commands.
   // Logical (CSS) size — canvas.width is the DPR-scaled backing store and
@@ -37,30 +97,11 @@ if (canvas) {
     "",
   );
 
-  const playgroundRegistries = new WeakMap<VemEditorState, PluginRegistry>();
-  const seedProjectFiles = (state: VemEditorState) => {
-    if (state.projectFiles.length > 0) return;
-    state.projectFiles = [
-      "src/main.ts",
-      "src/help.ts",
-      "src/plugins/PluginPanel.ts",
-      "package.json",
-      "README.md",
-    ];
-  };
   const getActivePlaygroundState = () =>
     playgroundView.getActiveEditorState() as VemEditorState | null;
   const getPlaygroundRegistry = () => {
     const activeState = getActivePlaygroundState();
-    if (!activeState) return null;
-    seedProjectFiles(activeState);
-
-    let registry = playgroundRegistries.get(activeState);
-    if (!registry) {
-      registry = createOfficialPluginRegistry(activeState);
-      playgroundRegistries.set(activeState, registry);
-    }
-    return registry;
+    return activeState ? ensureRegistry(activeState) : null;
   };
   getPlaygroundRegistry();
 
