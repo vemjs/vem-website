@@ -165,6 +165,9 @@ if (canvas) {
 
   // Hook workspace loader config logic
   playgroundView.onDidOpenDirectory(async (nodes, dir) => {
+    // WorkspaceExplorer filled the active state's projectFiles before firing
+    // this callback — snapshot the list for states created afterwards.
+    workspaceProjectFiles = getActivePlaygroundState()?.projectFiles ?? null;
     const configNode = nodes.find(
       (node) => node.label === ".vemrc.json" || node.label === ".vemrc.js",
     );
