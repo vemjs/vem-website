@@ -25,7 +25,11 @@ if (canvas) {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
 
-  const scene = new Scene(canvas);
+  // Performance: a11ySyncInterval=100 throttles DOM tree sync from 60/s to
+  // ~10/s during rapid typing (no user-perceptible delay for screen readers);
+  // maxDPR=2 caps the canvas backing store at 2× even on 3× displays,
+  // roughly halving pixel fill at no visible quality cost.
+  const scene = new Scene(canvas, { a11ySyncInterval: 100, maxDPR: 2 });
 
   const playgroundRegistries = new WeakMap<VemEditorState, PluginRegistry>();
   // The real file list once a directory is open (WorkspaceExplorer fills the
