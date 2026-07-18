@@ -16,7 +16,7 @@
     "@vectojs/core": "1.11.1",
     "@vectojs/devtools": "^0.4.3",
     "@vectojs/ui": "^1.11.3",
-    "@vemjs/core": "^0.7.0",
+    "@vemjs/core": "^0.7.1",
     "@vemjs/plugin-api": "^0.1.11",
     "@vemjs/plugin-autopairs": "^0.1.2",
     "@vemjs/plugin-git": "^0.1.4",

@@ -8,7 +8,7 @@
         "@vectojs/core": "1.11.1",
         "@vectojs/devtools": "^0.4.3",
         "@vectojs/ui": "^1.11.3",
-        "@vemjs/core": "^0.7.0",
+        "@vemjs/core": "^0.7.1",
         "@vemjs/plugin-api": "^0.1.11",
         "@vemjs/plugin-autopairs": "^0.1.2",
         "@vemjs/plugin-git": "^0.1.4",
@@ -156,7 +156,7 @@
 
     "@vectojs/ui": ["@vectojs/ui@1.11.3", "", { "dependencies": { "marked": "^18.0.6", "mathjax-full": "^3.2.2" }, "peerDependencies": { "@vectojs/core": ">=1.8.0 <2.0.0" } }, "sha512-jfKZjzcDMUzo9ood9zKzgOIMH0J4DrW40NUt22imsCA+H0ki9yoJ8M1iSHX3HOgbfgEOg7ltiY6+y3r2lscqyQ=="],
 
-    "@vemjs/core": ["@vemjs/core@0.7.0", "", {}, "sha512-zyocGe8zP3jke8pHCyawkvrOqe5wHhiz9tKbLYWWM6Y0KEXcu+sswRoGnan2f2wK2iSRfFkrfEt8RRVLk7jMew=="],
+    "@vemjs/core": ["@vemjs/core@0.7.1", "", {}, "sha512-6n7o/SZRdYJvoUeaBgyBhRKF09+WocFGTakbwuWF/ywv9RHwGaUVGIfCOYTYgPa1LkRnCpAcEfFgdITsTd1FYw=="],
 
     "@vemjs/plugin-api": ["@vemjs/plugin-api@0.1.11", "", { "dependencies": { "@vemjs/core": "^0.7.0" } }, "sha512-QvVJ/pdMhXDyB2xWSYkJmEHSbi35mSdt0aXFLxGU5YIx4ESypyFFPCfU+Mu5R8xW3NvUFaJsVuDJ6eoXuBR9kw=="],
 
@@ -247,5 +247,9 @@
     "vite": ["vite@8.1.5", "", { "dependencies": { "lightningcss": "^1.32.0", "picomatch": "^4.0.5", "postcss": "^8.5.17", "rolldown": "~1.1.5", "tinyglobby": "^0.2.17" }, "optionalDependencies": { "fsevents": "~2.3.3" }, "peerDependencies": { "@types/node": "^20.19.0 || >=22.12.0", "@vitejs/devtools": "^0.3.0", "esbuild": "^0.27.0 || ^0.28.0", "jiti": ">=1.21.0", "less": "^4.0.0", "sass": "^1.70.0", "sass-embedded": "^1.70.0", "stylus": ">=0.54.8", "sugarss": "^5.0.0", "terser": "^5.16.0", "tsx": "^4.8.1", "yaml": "^2.4.2" }, "optionalPeers": ["@types/node", "@vitejs/devtools", "esbuild", "jiti", "less", "sass", "sass-embedded", "stylus", "sugarss", "terser", "tsx", "yaml"], "bin": { "vite": "bin/vite.js" } }, "sha512-7ULLwsCdYx/nRyrpiEwvqb5TFHrMVZyBt+rg/OAXT7rgj/z+DtTDyKFeLAdDkubDVDKD8jOsndmy7m55XcfUsw=="],
 
     "wicked-good-xpath": ["wicked-good-xpath@1.3.0", "", {}, "sha512-Gd9+TUn5nXdwj/hFsPVx5cuHHiF5Bwuc30jZ4+ronF1qHK5O7HD0sgmXWSEgwKquT3ClLoKPVbO6qGwVwLzvAw=="],
+
+    "@vemjs/plugin-api/@vemjs/core": ["@vemjs/core@0.7.0", "", {}, "sha512-zyocGe8zP3jke8pHCyawkvrOqe5wHhiz9tKbLYWWM6Y0KEXcu+sswRoGnan2f2wK2iSRfFkrfEt8RRVLk7jMew=="],
+
+    "@vemjs/renderer-vecto/@vemjs/core": ["@vemjs/core@0.7.0", "", {}, "sha512-zyocGe8zP3jke8pHCyawkvrOqe5wHhiz9tKbLYWWM6Y0KEXcu+sswRoGnan2f2wK2iSRfFkrfEt8RRVLk7jMew=="],
   }
 }
