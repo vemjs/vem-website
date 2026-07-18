@@ -11,6 +11,7 @@ import { PluginPanel } from "./plugins/PluginPanel";
 import {
   createOfficialPluginRegistry,
   activatePluginById,
+  officialPlugins,
 } from "./plugins/officialPlugins";
 import { HELP_TEXT, VEMRC_TEMPLATE } from "./help";
 
@@ -156,6 +157,29 @@ if (canvas) {
   VemEditorState.registerGlobalExCommand("NERDTree", toggleFileTree);
   VemEditorState.registerGlobalExCommand("PluginLab", togglePluginLab);
   VemEditorState.registerGlobalExCommand("plugins", togglePluginLab);
+
+  // :PlugStatus — show which plugins are currently active for this buffer
+  // (Vim philosophy: status must be available via keyboard, not just a mouse-
+  // opened UI panel). Deferred plugins (Lualine, Treesitter) show as "off"
+  // until activated via their respective :commands.
+  VemEditorState.registerGlobalExCommand("PlugStatus", () => {
+    const registry = getPlaygroundRegistry();
+    const activeState = getActivePlaygroundState();
+    if (!activeState) return;
+    if (!registry) {
+      activeState.statusMessage = "No plugin registry for this buffer";
+      return;
+    }
+    const lines = officialPlugins.map((p) => {
+      const active = registry.has(p.plugin.name);
+      return `${active ? "✓" : "✗"} ${p.plugin.name}  — ${p.summary}`;
+    });
+    lines.push("");
+    lines.push("Use :PluginLab to open the management panel.");
+    // Show in the floating help popup style (or just the status line).
+    // For a quick list, multi-line statusMessage renders traceably.
+    activeState.statusMessage = lines.slice(0, 7).join(" | ");
+  });
 
   // Appearance-changing plugins are opt-in (like Vim's :syntax on).
   const activate = (id: string) => () => {
@@ -347,6 +371,25 @@ if (canvas) {
     // to the state machine corrupts the buffer. The composed text arrives
     // through the projected textarea instead.
     if (e.isComposing || e.key === "Process") return;
+
+    // Escape closes any open side panel before passing to the editor state
+    // machine (Vim philosophy: the keyboard alone must be enough to dismiss
+    // chrome — no mouse click required on X or Close buttons).
+    if (!(e.ctrlKey || e.metaKey) && !e.altKey && e.key === "Escape") {
+      // 1. PluginLab panel
+      if (!pluginPanelUserHidden) {
+        pluginPanelUserHidden = true;
+        layoutEditor(window.innerWidth, window.innerHeight);
+        scene.markDirty();
+        return; // don't pass Esc to the state machine
+      }
+      // 2. Explorer sidebar
+      if (playgroundView.isSidebarVisible()) {
+        playgroundView.toggleSidebar();
+        scene.markDirty();
+        return;
+      }
+    }
 
     const ctrl = e.ctrlKey || e.metaKey;
     let mappedKey = e.key;
