@@ -17,7 +17,7 @@
         "@vemjs/plugin-telescope": "^0.1.2",
         "@vemjs/plugin-treesitter": "^0.1.1",
         "@vemjs/plugin-trim-whitespace": "^0.1.1",
-        "@vemjs/renderer-vecto": "0.4.12",
+        "@vemjs/renderer-vecto": "^0.4.16",
       },
       "devDependencies": {
         "oxlint": "^1.72.0",
@@ -174,7 +174,7 @@
 
     "@vemjs/plugin-trim-whitespace": ["@vemjs/plugin-trim-whitespace@0.1.1", "", { "peerDependencies": { "@vemjs/core": "^0.1.4", "@vemjs/plugin-api": "^0.1.4" } }, "sha512-DdKXoWRiExN0Kjz79MqfyzVBOhdz7ww/GS4CV8a4whmSKoVU3suKdquLdEsii9x6IIPO1AC+5kDovEftGH2GPg=="],
 
-    "@vemjs/renderer-vecto": ["@vemjs/renderer-vecto@0.4.12", "", { "dependencies": { "@vectojs/core": "^1.11.1", "@vectojs/ui": "^1.11.0", "@vemjs/core": "^0.7.0" } }, "sha512-gsTP/KgU+y5rT2BiwDdAVJh4/FN27R1VDJbQ/wj2i3zXaubIpusPYbwaG2bQJt9rVTyLS49pasVAmAtRvxBSlA=="],
+    "@vemjs/renderer-vecto": ["@vemjs/renderer-vecto@0.4.16", "", { "dependencies": { "@vectojs/core": "^1.11.1", "@vectojs/ui": "^1.11.0", "@vemjs/core": "^0.7.0" } }, "sha512-xZgWcLAM2qXU86x6DOhAuqzz14R1MCO5gicnhs3KY+FREO5r0GSSH3fmBO7x3GmQ8dJY6EN41uqcfqCy9ph4eQ=="],
 
     "@xmldom/xmldom": ["@xmldom/xmldom@0.9.10", "", {}, "sha512-A9gOqLdi6cV4ibazAjcQufGj0B1y/vDqYrcuP6d/6x8P27gRS8643Dj9o1dEKtB6O7fwxb2FgBmJS2mX7gpvdw=="],
 
