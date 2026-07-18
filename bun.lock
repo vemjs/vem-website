@@ -156,7 +156,7 @@
 
     "@vectojs/ui": ["@vectojs/ui@1.11.3", "", { "dependencies": { "marked": "^18.0.6", "mathjax-full": "^3.2.2" }, "peerDependencies": { "@vectojs/core": ">=1.8.0 <2.0.0" } }, "sha512-jfKZjzcDMUzo9ood9zKzgOIMH0J4DrW40NUt22imsCA+H0ki9yoJ8M1iSHX3HOgbfgEOg7ltiY6+y3r2lscqyQ=="],
 
-    "@vemjs/core": ["@vemjs/core@0.7.1", "", {}, "sha512-6n7o/SZRdYJvoUeaBgyBhRKF09+WocFGTakbwuWF/ywv9RHwGaUVGIfCOYTYgPa1LkRnCpAcEfFgdITsTd1FYw=="],
+    "@vemjs/core": ["@vemjs/core@0.7.2", "", {}, "sha512-NpgUrBEjqpM7T75LwS12k5yZKUIfE4/FapOnnRd8tto+8WDFaf03rN3yjqbG9GtEz4T7dFqnH7pt9D4EHAydQA=="],
 
     "@vemjs/plugin-api": ["@vemjs/plugin-api@0.1.11", "", { "dependencies": { "@vemjs/core": "^0.7.0" } }, "sha512-QvVJ/pdMhXDyB2xWSYkJmEHSbi35mSdt0aXFLxGU5YIx4ESypyFFPCfU+Mu5R8xW3NvUFaJsVuDJ6eoXuBR9kw=="],
 
