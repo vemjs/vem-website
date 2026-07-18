@@ -89,6 +89,13 @@ if (canvas) {
   // trim-on-save, and every other plugin (2026-07-16 audit, bug 1).
   VemEditorState.onDidCreateState((state) => {
     ensureRegistry(state);
+    state.onOptionsChanged((key, value) => {
+      try {
+        const opts = JSON.parse(localStorage.getItem("vem.options") || "{}");
+        opts[key] = value;
+        localStorage.setItem("vem.options", JSON.stringify(opts));
+      } catch {}
+    });
   });
 
   // Boot like a fresh Vim: an empty buffer (the renderer draws the ~ column and
@@ -255,9 +262,25 @@ if (canvas) {
   };
 
   const savedSnapshot = restoreSnapshot();
+
   if (savedSnapshot) {
     playgroundView.getWorkspace().restoreBuffersSnapshot(savedSnapshot);
   }
+  // Restore persistent options (e.g. :set number) from localStorage.
+  try {
+    const opts = JSON.parse(localStorage.getItem("vem.options") || "{}");
+    const activeState = getActivePlaygroundState();
+    if (activeState && opts.number === "absolute") {
+      activeState.executeSetOption("number");
+    } else if (activeState && opts.number === "relative") {
+      activeState.executeSetOption("relativenumber");
+    } else if (activeState && opts.number === "none") {
+      activeState.executeSetOption("nonumber");
+    }
+    if (activeState && opts.clipboard === "unnamed") {
+      activeState.executeSetOption("clipboard=unnamed");
+    }
+  } catch {} // eslint-disable-line no-empty
   setInterval(saveSnapshot, 2000);
   window.addEventListener("beforeunload", saveSnapshot);
   document.addEventListener("visibilitychange", () => {
