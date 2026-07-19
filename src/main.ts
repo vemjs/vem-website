@@ -129,6 +129,11 @@ if (canvas) {
     if (!layout) return;
     layout.splitActivePane("horizontal", text);
     scene.markDirty();
+    // splitActivePane doesn't move DOM focus to the new pane's a11y textarea
+    // — without this, focus falls to <body>, and the window-level keydown
+    // fallback (which independently guards bare modifiers too, but still
+    // isn't the a11y textarea's IME-aware path) becomes the only listener.
+    canvas.focus();
   };
   VemEditorState.registerGlobalExCommand("help", () =>
     openSplitWithText(HELP_TEXT),
@@ -371,8 +376,37 @@ if (canvas) {
     "/", // Vim search; also Chrome quick-find in some setups
   ]);
 
+  // A bare modifier keydown (pressing just Shift/Control/Alt/Meta/CapsLock
+  // with no other key held) carries no printable/actionable content — every
+  // browser fires it as its OWN keydown before the combo key's own event
+  // (holding Shift then pressing G fires 'Shift' then 'G' separately). This
+  // window-level listener is the fallback path active whenever DOM focus
+  // isn't on the canvas/a11y textarea (e.g. right after :help/:config open
+  // a split via splitActivePane, which doesn't re-focus the canvas — focus
+  // falls to <body>). Feeding 'Shift' into handleKey() while pendingKeys=
+  // ['d'] awaits a motion corrupted every dG/dW/dE-style combo exactly like
+  // the entity-level bug fixed earlier; this second, independent keydown
+  // path needs the identical guard, or splits keep reintroducing it.
+  const bareModifierKeys = new Set([
+    "Shift",
+    "Control",
+    "Alt",
+    "Meta",
+    "CapsLock",
+    "AltGraph",
+    "Fn",
+    "FnLock",
+    "Hyper",
+    "Super",
+    "ScrollLock",
+    "NumLock",
+    "Symbol",
+    "SymbolLock",
+  ]);
+
   window.addEventListener("keydown", (e) => {
     if (engineOwnsKeys(e)) return;
+    if (bareModifierKeys.has(e.key)) return;
     // IME composition produces 'Process'/composing keydowns — feeding them
     // to the state machine corrupts the buffer. The composed text arrives
     // through the projected textarea instead.
