@@ -8,7 +8,7 @@
         "@vectojs/core": "1.11.1",
         "@vectojs/devtools": "^0.4.3",
         "@vectojs/ui": "^1.11.3",
-        "@vemjs/core": "^0.7.1",
+        "@vemjs/core": "^0.8.0",
         "@vemjs/plugin-api": "^0.1.11",
         "@vemjs/plugin-autopairs": "^0.1.2",
         "@vemjs/plugin-git": "^0.1.4",
@@ -17,7 +17,7 @@
         "@vemjs/plugin-telescope": "^0.1.2",
         "@vemjs/plugin-treesitter": "^0.1.1",
         "@vemjs/plugin-trim-whitespace": "^0.1.1",
-        "@vemjs/renderer-vecto": "^0.4.16",
+        "@vemjs/renderer-vecto": "^0.4.23",
       },
       "devDependencies": {
         "oxlint": "^1.72.0",
@@ -156,9 +156,9 @@
 
     "@vectojs/ui": ["@vectojs/ui@1.11.3", "", { "dependencies": { "marked": "^18.0.6", "mathjax-full": "^3.2.2" }, "peerDependencies": { "@vectojs/core": ">=1.8.0 <2.0.0" } }, "sha512-jfKZjzcDMUzo9ood9zKzgOIMH0J4DrW40NUt22imsCA+H0ki9yoJ8M1iSHX3HOgbfgEOg7ltiY6+y3r2lscqyQ=="],
 
-    "@vemjs/core": ["@vemjs/core@0.7.3", "", {}, "sha512-989sAQult0h+qtsruCtyZZhhJq0Z+a+AvloGRgKE4fqHV/qVQVupDYMS62lOcEfS2eD/QtLVasCYSxyXLFlWwQ=="],
+    "@vemjs/core": ["@vemjs/core@0.8.0", "", {}, "sha512-mZaHKiEVgihJ/Z3LFi0mJdkFvpxgYI+jl0n5MIWos/r1IQSJu/QJ37L89bXaqQxuC8OBtEWlVKsWnPjF+DjieQ=="],
 
-    "@vemjs/plugin-api": ["@vemjs/plugin-api@0.1.11", "", { "dependencies": { "@vemjs/core": "^0.7.0" } }, "sha512-QvVJ/pdMhXDyB2xWSYkJmEHSbi35mSdt0aXFLxGU5YIx4ESypyFFPCfU+Mu5R8xW3NvUFaJsVuDJ6eoXuBR9kw=="],
+    "@vemjs/plugin-api": ["@vemjs/plugin-api@0.1.12", "", { "dependencies": { "@vemjs/core": "^0.8.0" } }, "sha512-UXTlbzdvDFmCSOaxLT3bw8b455mF+YwKEb14jILgVBrpEtySm1sCo7e0n1+GaQnTbB1vwguDV+s8w3zASCXZJA=="],
 
     "@vemjs/plugin-autopairs": ["@vemjs/plugin-autopairs@0.1.2", "", { "peerDependencies": { "@vemjs/core": "^0.1.4", "@vemjs/plugin-api": "^0.1.4" } }, "sha512-J1nx+YcuMVSW95FFT9VVgUdFYW5JtsZGXJlWAAs1VTWzEVkF/sk6GsoVE0ViCbsY1HAl91QOiRplH3yg26+R8w=="],
 
@@ -174,7 +174,7 @@
 
     "@vemjs/plugin-trim-whitespace": ["@vemjs/plugin-trim-whitespace@0.1.1", "", { "peerDependencies": { "@vemjs/core": "^0.1.4", "@vemjs/plugin-api": "^0.1.4" } }, "sha512-DdKXoWRiExN0Kjz79MqfyzVBOhdz7ww/GS4CV8a4whmSKoVU3suKdquLdEsii9x6IIPO1AC+5kDovEftGH2GPg=="],
 
-    "@vemjs/renderer-vecto": ["@vemjs/renderer-vecto@0.4.21", "", { "dependencies": { "@vectojs/core": "^1.11.1", "@vectojs/ui": "^1.11.0", "@vemjs/core": "^0.7.0" } }, "sha512-JHkHA2YihmzU4xV772VKdjJ3Lr+ww3QW98MNHmg5bzbtpkbgxZFzaodKBq9RaKqsDUqas9W1ALpX8/z7IYS5qA=="],
+    "@vemjs/renderer-vecto": ["@vemjs/renderer-vecto@0.4.23", "", { "dependencies": { "@vectojs/core": "^1.11.1", "@vectojs/ui": "^1.11.0", "@vemjs/core": "^0.8.0" } }, "sha512-TloZF4BmF3uwyRRbTXbQouDVsAU9O4IxFswox1n4BjRl2DPFV3tK3bUhAkrAZHZtPnvzzsRKytqhjJcW0yDoBg=="],
 
     "@xmldom/xmldom": ["@xmldom/xmldom@0.9.10", "", {}, "sha512-A9gOqLdi6cV4ibazAjcQufGj0B1y/vDqYrcuP6d/6x8P27gRS8643Dj9o1dEKtB6O7fwxb2FgBmJS2mX7gpvdw=="],
 

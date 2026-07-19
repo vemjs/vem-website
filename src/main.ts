@@ -2,9 +2,11 @@ import "./style.css";
 import { Scene } from "@vectojs/core";
 import {
   WorkspaceExplorer,
+  VemEditorEntity,
   CTRL_VIM_KEYS,
   PREVENT_CTRL_KEYS,
 } from "@vemjs/renderer-vecto";
+import pkg from "../package.json";
 import type { PluginRegistry } from "@vemjs/plugin-api";
 import { ConfigLoader, VemEditorState } from "@vemjs/core";
 import { PluginPanel } from "./plugins/PluginPanel";
@@ -31,6 +33,10 @@ if (canvas) {
   // maxDPR=2 caps the canvas backing store at 2× even on 3× displays,
   // roughly halving pixel fill at no visible quality cost.
   const scene = new Scene(canvas, { a11ySyncInterval: 100, maxDPR: 2 });
+
+  // Shown on the intro splash ("VEM - Vim, Enhanced & Modal  v0.2.x") so
+  // users can tell which build vem.run is serving without opening devtools.
+  VemEditorEntity.setVersion(pkg.version);
 
   const playgroundRegistries = new WeakMap<VemEditorState, PluginRegistry>();
   // The real file list once a directory is open (WorkspaceExplorer fills the
