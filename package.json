@@ -13,7 +13,7 @@
     "lint": "oxlint ."
   },
   "dependencies": {
-    "@vectojs/core": "1.11.1",
+    "@vectojs/core": "1.11.3",
     "@vectojs/devtools": "^0.4.3",
     "@vectojs/ui": "^1.11.3",
     "@vemjs/core": "^0.8.0",
